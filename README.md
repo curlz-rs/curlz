@@ -1,5 +1,5 @@
 <div align="center">
- <img src="https://github.com/sassman/curlx-rs/blob/main/resources/demo.gif?raw=true" width="250" height="250">
+ <img src="https://github.com/sassman/curlx-rs/blob/main/resources/demo.gif?raw=true">
  <h1><strong>curlx</strong></h1>
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
