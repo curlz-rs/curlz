@@ -13,12 +13,16 @@ include = ["src/**/*", "LICENSE", "*.md"]
 [dependencies]
 anyhow = "1.0"
 console = "0.15"
+convert_case = "0.5"
 dialoguer = "0.10"
+filenamify = "0.1"
+toml = "0.5"
 liquid = "0.26"
 liquid-core = "0.26"
 regex = "1.5"
-serde = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_regex = "1.1"
+serde_yaml = "0.8"
 tempfile = "3.3"
 thiserror = "1.0"
-toml = "0.5"
 walkdir = "2.3"
