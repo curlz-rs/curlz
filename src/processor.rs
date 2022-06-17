@@ -47,6 +47,19 @@ mod tests {
     use crate::request::HttpMethod;
     use crate::{StringEntry, TemplateSlots, VarInfo};
     use regex::Regex;
+    use tempfile::{tempdir, TempDir};
+
+    impl Processor {
+        pub fn temporary() -> (Self, TempDir) {
+            let tempdir = tempdir().unwrap();
+            (
+                Self {
+                    working_dir: tempdir.path().to_path_buf(),
+                },
+                tempdir,
+            )
+        }
+    }
 
     #[test]
     fn should_handle_bookmark_as_command() {
@@ -74,17 +87,20 @@ mod tests {
             },
         );
 
-        let p = Processor::new().unwrap();
+        let (p, tmp) = Processor::temporary();
         p.handle_bookmark_as(&cmd).unwrap();
 
-        assert!(fs::metadata(
-            std::env::current_dir()
-                .unwrap()
-                .join(".curlx")
-                .join("bookmarks")
-                .join("get_protonmail_gpg_{{email}}.yml")
+        let saved_bookmark = String::from_utf8(
+            fs::read(
+                tmp.path()
+                    .join(".curlx")
+                    .join("bookmarks")
+                    .join("get_protonmail_gpg_{{email}}.yml"),
+            )
+            .unwrap(),
         )
-        .unwrap()
-        .is_file());
+        .unwrap();
+
+        insta::assert_snapshot!(saved_bookmark);
     }
 }
