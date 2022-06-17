@@ -28,10 +28,16 @@ impl Processor {
 
         let file_name = filenamify(format!("{:?} {}", &request.method, slug)).to_case(Case::Snake);
         let request = serde_yaml::to_string(request)?;
-        let bookmarks_path = self.working_dir.join(".curlx").join("bookmarks");
 
+        // todo(refactor): extract this logic into the `BookmarkCollection` or similar
+        //   - so that we only the delegation left here
+        //   - tests will not have to verify the files any more, only the insta yaml snapshot tests
+        let bookmarks_path = self.working_dir.join(".curlx").join("bookmarks");
         fs::create_dir_all(bookmarks_path.as_path())?;
         {
+            // todo(refactor): instead of saving the request only, it would be good to save a `Bookmark`
+            //    - that would contain the original slug, hence offers search capabilities
+            //    - makes a clear data structural distinction between `Request` and `Bookmark<Request>`
             fs::write(
                 bookmarks_path.join(format!("{}.yml", file_name.as_str())),
                 request,
