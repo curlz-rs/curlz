@@ -1,0 +1,29 @@
+---
+source: src/workspace/bookmark_collection.rs
+expression: saved_bookmark
+---
+---
+slug: "/protonmail/gpg/:email"
+request:
+  url: "{{protonmail_api_baseurl}}/pks/lookup?op=get&search={{email}}"
+  method: GET
+  headers: []
+  curl_params: []
+  placeholders:
+    - var_name: email
+      var_info:
+        String:
+          entry:
+            default: ~
+            choices: ~
+            regex: "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
+      prompt: enter an email address
+    - var_name: protonmail_api_baseurl
+      var_info:
+        String:
+          entry:
+            default: "https://api.protonmail.ch"
+            choices: ~
+            regex: ~
+      prompt: enter the protonmail api baseurl
+
