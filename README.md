@@ -9,6 +9,25 @@
 
 </div>
 
-> curl wrapper with templating, bookmarking and environments powers just like postman
-
+> curl wrapper with placeholder, bookmark and environment powers just like postman
+ 
 ## Features
+
+- ☑️ .env files
+- ☑️ .yaml env files
+- ☑️ placeholders evaluation, via liquid templates
+  - in urls
+  - in http headers (`-H | --header` arguments)
+  - in all other passed curl parameters
+- ☑️ save request as bookmark, containing
+  - curl arguments
+  - http headers
+  - http method
+  - placeholders
+- ☑️ pass all arguments after `-- ` to curl, that makes drop-in-replacement possible
+
+## TODOs
+- [] execute a bookmarked request
+- [] evaluate placeholders at the beginning of an url
+- [] special placeholder variables like `mfa_token` etc. that would interact on usage with the user
+- [] test other template engines
