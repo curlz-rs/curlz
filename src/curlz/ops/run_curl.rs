@@ -3,9 +3,8 @@ use crate::ops::{MutOperation, OperationContext};
 use crate::Result;
 
 use anyhow::Context;
-use liquid::Parser;
-use liquid_core::Object;
 use std::process::{Command, Stdio};
+use minijinja::value::Value;
 
 #[derive(Debug)]
 pub struct RunCurlCommand<'a> {
@@ -34,12 +33,9 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
             env.insert(&placeholder.name, value);
         });
 
-        let engine = liquid::ParserBuilder::with_stdlib().build()?;
-        let ctx: Object = env.into();
-
-        let url_template = engine.parse(self.request.url.as_str())?;
-        let url = url_template.render(&ctx)?;
-
+        let ctx: minijinja::value::Value = env.into();
+        let mut env = minijinja::Environment::new();
+        let url = parse(&mut env, &ctx, self.request.url.as_ref(), "url")?;
         let method: String = (&self.request.method).into();
 
         let mut cmd = Command::new("curl");
@@ -49,13 +45,14 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
                     .request
                     .curl_params
                     .iter()
-                    .map(|s| parse(&engine, &ctx, s))
+                    .map(|s| parse(&mut env, &ctx, s, "param"))
                     .collect::<Result<Vec<_>>>()?,
             )
-            .args(self.request.headers.as_ref().iter().flat_map(|(k, v)| {
+            .args(self.request.headers.as_ref().iter().flat_map(|(k, v) |{
+                let value = parse(&mut env, &ctx, v, k).unwrap();
                 vec![
                     "-H".to_string(),
-                    parse(&engine, &ctx, format!("{}: {}", k, v)).unwrap(),
+                    format!("{}: {}", k, value)
                 ]
             }))
             .arg(&url);
@@ -71,9 +68,9 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
     }
 }
 
-fn parse(parser: &Parser, ctx: &Object, str: impl AsRef<str>) -> Result<String> {
-    parser
-        .parse(str.as_ref())
-        .and_then(|s| s.render(ctx))
-        .map_err(|e| e.into())
+fn parse<'source>(env: &mut minijinja::Environment<'source>, ctx: &Value, str: &'source str, name: &'source str) -> Result<String> {
+    env.add_template(name, str)?;
+    let template = env.get_template(name)?;
+
+    template.render(&ctx).map_err(|e| e.into())
 }

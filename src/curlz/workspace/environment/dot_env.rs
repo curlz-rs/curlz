@@ -21,7 +21,7 @@ impl TryFrom<DotEnvFile> for Environment {
             .map_err(anyhow::Error::from)?
             .map(|i| i.unwrap())
             .for_each(|(key, value)| {
-                env.0.insert(key, value);
+                env.as_mut().insert(key, value);
             });
 
         Ok(env)

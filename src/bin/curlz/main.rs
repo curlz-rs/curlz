@@ -77,7 +77,7 @@ fn main() -> Result<()> {
                 let potential_url = bookmark.unwrap();
                 if potential_url.trim_start_matches('\'').starts_with("http") {
                     HttpRequest {
-                        url: potential_url.to_string(),
+                        url: potential_url,
                         method,
                         headers,
                         placeholders,

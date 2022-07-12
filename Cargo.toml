@@ -18,8 +18,10 @@ dialoguer = "0.10"
 filenamify = "0.1"
 
 # todo: re-evaluate template engine, try tera and mini-jinja
-liquid = "0.26"
-liquid-core = "0.26"
+minijinja = "0.17.0"
+
+#liquid = "0.26"
+#liquid-core = "0.26"
 
 [dev-dependencies]
 insta = "1.15"
