@@ -1,4 +1,6 @@
-use crate::{CommandContext, Execute, HttpRequest, Result};
+use crate::data::HttpRequest;
+use crate::ops::{MutOperation, OperationContext};
+use crate::Result;
 
 use anyhow::Context;
 use liquid::Parser;
@@ -16,11 +18,22 @@ impl<'a> RunCurlCommand<'a> {
     }
 }
 
-impl<'a> Execute for RunCurlCommand<'a> {
+impl<'a> MutOperation for RunCurlCommand<'a> {
     type Output = ();
 
-    fn execute(self, context: &CommandContext) -> crate::Result<Self::Output> {
-        let env = context.environment();
+    fn execute(self, context: &mut OperationContext) -> crate::Result<Self::Output> {
+        let env = context.environment_mut();
+
+        // todo: here the placeholders needs to be merged with the environment
+        self.request.placeholders.iter().for_each(|placeholder| {
+            // todo: no unwrapping here
+            let value = placeholder
+                .value
+                .as_ref()
+                .unwrap_or_else(|| placeholder.default.as_ref().unwrap());
+            env.insert(&placeholder.name, value);
+        });
+
         let engine = liquid::ParserBuilder::with_stdlib().build()?;
         let ctx: Object = env.into();
 
@@ -48,10 +61,9 @@ impl<'a> Execute for RunCurlCommand<'a> {
             .arg(&url);
 
         // todo: only display this in verbose mode
-        println!("{:?}", &cmd);
+        // println!("{:?}", &cmd);
 
-        cmd.stdin(Stdio::inherit())
-            .stdout(Stdio::inherit())
+        cmd.stdout(Stdio::inherit())
             .stderr(Stdio::inherit())
             .output()
             .map(|_output| ())

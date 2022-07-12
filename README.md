@@ -1,15 +1,15 @@
 <div align="center">
- <img src="https://github.com/sassman/curlx-rs/blob/main/resources/demo.gif?raw=true">
- <h1><strong>curlx</strong></h1>
+ <img src="https://github.com/curlz-rs/curlz/blob/main/resources/demo.gif?raw=true">
+ <h1><strong>curlz</strong></h1>
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Build Status](https://github.com/curlx-rs/curlx/workflows/Build/badge.svg)](https://github.com/curlx-rs/curlx/actions?query=branch%3Amain+workflow%3ABuild+)
-[![crates.io](https://img.shields.io/crates/v/curlx.svg)](https://crates.io/crates/curlx)
-[![dependency status](https://deps.rs/repo/github/sassman/curlx-rs/status.svg)](https://deps.rs/repo/github/curlx-rs/curlx)
+[![Build Status](https://github.com/curlz-rs/curlz/workflows/Build/badge.svg)](https://github.com/curlz-rs/curlz/actions?query=branch%3Amain+workflow%3ABuild+)
+[![crates.io](https://img.shields.io/crates/v/curlz.svg)](https://crates.io/crates/curlz)
+[![dependency status](https://deps.rs/repo/github/curlz-rs/curlz/status.svg)](https://deps.rs/repo/github/curlz-rs/curlz)
 
 </div>
 
-> curl wrapper with placeholder, bookmark and environment powers just like postman
+> a curl wrapper with placeholder, bookmark and environment powers just like postman but for the terminal
  
 ## Features
 
@@ -18,16 +18,41 @@
 - ☑️ placeholders evaluation, via liquid templates
   - in urls
   - in http headers (`-H | --header` arguments)
-  - in all other passed curl parameters
-- ☑️ save request as bookmark, containing
+  - in every other passed curl parameter
+- ☑️ save request as a bookmark, containing
   - curl arguments
   - http headers
   - http method
   - placeholders
 - ☑️ pass all arguments after `-- ` to curl, that makes drop-in-replacement possible
+- ☑️ execute a bookmarked request
 
 ## TODOs
-- [] execute a bookmarked request
 - [] evaluate placeholders at the beginning of an url
-- [] special placeholder variables like `mfa_token` etc. that would interact on usage with the user
+- [] special placeholder variables that would interact with the user
+  - example: prompting for a password `{{ password_prompt() }}
+    ```
+    curlz -- -u "{{ username }}:{{ password_prompt() }}" https://api.github.com/user
+    ```
+  - example:  `{{ jwt_token(signin_key, signin_secret) }}`
+    ```
+    curlz -H "Authorization: Bearer {{ mfa_token }}" -X POST https://api.github.com/user/repos -d '{ "name": "{{ repo_name }}" }'
+    ```
 - [] test other template engines
+
+## Example 1
+
+In this example we're going to download a pre-configured `.gitignore` for a given language from GitHub via curl:
+```sh
+curl https://api.github.com/gitignore/templates/Rust
+```
+
+Now we are doing the same with curlz:
+```sh
+curlz r https://api.github.com/gitignore/templates/Rust
+```
+
+we can also introduce a parameter to support multiple languages:
+```sh
+curlz 'https://api.github.com/gitignore/templates/{{ lang }}'
+```

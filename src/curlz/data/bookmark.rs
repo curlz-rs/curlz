@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{HttpRequest, SaveBookmarkCommand};
+use crate::data::HttpRequest;
+use crate::ops::SaveBookmark;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Bookmark {
@@ -30,11 +31,11 @@ impl Bookmark {
     }
 }
 
-impl<'a> From<&SaveBookmarkCommand<'a>> for Bookmark {
-    fn from(cmd: &SaveBookmarkCommand) -> Self {
+impl<'a> From<&SaveBookmark<'a>> for Bookmark {
+    fn from(cmd: &SaveBookmark) -> Self {
         Self {
             slug: cmd.slug.clone(),
-            request: cmd.to_bookmark.clone(),
+            request: cmd.bookmark.clone(),
         }
     }
 }

@@ -4,10 +4,10 @@ use filenamify::filenamify;
 use std::path::PathBuf;
 use std::{env, fs};
 
-use crate::data::Bookmark;
+use crate::data::{Bookmark, HttpMethod};
 use crate::Result;
 
-const WORKSPACE_FOLDER: &str = ".curlx";
+const WORKSPACE_FOLDER: &str = ".curlz";
 const BOOKMARK_FOLDER: &str = "bookmarks";
 
 pub struct BookmarkCollection {
@@ -44,15 +44,30 @@ impl BookmarkCollection {
             .map_err(|e| anyhow!("cannot write request bookmark to file: {}", e))
         }
     }
+
+    pub fn load(&self, name: impl AsRef<str>, method: &HttpMethod) -> Result<Option<Bookmark>> {
+        let slug = name.as_ref();
+        let bookmarks_path = self
+            .working_dir
+            .join(WORKSPACE_FOLDER)
+            .join(BOOKMARK_FOLDER);
+        let file_name = filenamify(format!("{:?} {}", method, slug)).to_case(Case::Snake);
+        let file_path = bookmarks_path.join(format!("{}.yml", file_name.as_str()));
+        if !file_path.exists() {
+            return Ok(None);
+        }
+        let bookmark = fs::read_to_string(file_path)?;
+        Ok(Some(serde_yaml::from_str(&bookmark)?))
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::data::HttpMethod;
-    use crate::variables::{StringEntry, VarInfo};
-    use crate::{HttpHeaders, HttpRequest, SaveBookmarkCommand, TemplateSlots};
-    use regex::Regex;
+    use crate::data::{HttpHeaders, HttpRequest};
+    use crate::ops::SaveBookmark;
+    use crate::variables::Placeholder;
     use tempfile::{tempdir, TempDir};
 
     impl BookmarkCollection {
@@ -76,7 +91,7 @@ mod tests {
             curl_params: vec![],
             placeholders: vec![email_placeholder(), protonmail_api_baseurl_placeholder()],
         };
-        let cmd = SaveBookmarkCommand::new("/protonmail/gpg/:email", &request);
+        let cmd = SaveBookmark::new("/protonmail/gpg/:email", &request);
 
         let (p, tmp) = BookmarkCollection::temporary();
         p.save(&(&cmd).into()).unwrap();
@@ -95,34 +110,21 @@ mod tests {
         insta::assert_snapshot!(saved_bookmark);
     }
 
-    fn email_placeholder() -> TemplateSlots {
-        TemplateSlots {
-            var_name: "email".to_string(),
-            var_info: VarInfo::String {
-                entry: Box::new(StringEntry {
-                    default: None,
-                    choices: None,
-                    regex: Some(
-                        Regex::new(r"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$")
-                            .unwrap(),
-                    ),
-                }),
-            },
-            prompt: "enter an email address".to_string(),
+    fn email_placeholder() -> Placeholder {
+        Placeholder {
+            name: "email".to_string(),
+            value: None,
+            default: None,
+            prompt: "enter an email address".to_string().into(),
         }
     }
 
-    fn protonmail_api_baseurl_placeholder() -> TemplateSlots {
-        TemplateSlots {
-            var_name: "protonmail_api_baseurl".to_string(),
-            var_info: VarInfo::String {
-                entry: Box::new(StringEntry {
-                    default: Some("https://api.protonmail.ch".to_string()),
-                    choices: None,
-                    regex: None,
-                }),
-            },
-            prompt: "enter the protonmail api baseurl".to_string(),
+    fn protonmail_api_baseurl_placeholder() -> Placeholder {
+        Placeholder {
+            name: "protonmail_api_baseurl".to_string(),
+            value: None,
+            default: "https://api.protonmail.ch".to_string().into(),
+            prompt: "enter the protonmail api baseurl".to_string().into(),
         }
     }
 }

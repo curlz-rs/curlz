@@ -2,18 +2,18 @@ use crate::workspace::BookmarkCollection;
 use crate::{Environment, Result};
 
 /// processes all commands and keeps the application state
-pub struct CommandContext {
+pub struct OperationContext {
     bookmark_collection: BookmarkCollection,
-    enviroment: Environment,
+    environment: Environment,
 }
 
-impl CommandContext {
+impl OperationContext {
     /// ## fallible
     /// in cases where the workspace folder is not accessible
     pub fn new(env: Environment) -> Result<Self> {
         BookmarkCollection::new().map(|bookmark_collection| Self {
             bookmark_collection,
-            enviroment: env,
+            environment: env,
         })
     }
 
@@ -22,6 +22,6 @@ impl CommandContext {
     }
 
     pub(crate) fn environment(&self) -> &Environment {
-        &self.enviroment
+        &self.environment
     }
 }

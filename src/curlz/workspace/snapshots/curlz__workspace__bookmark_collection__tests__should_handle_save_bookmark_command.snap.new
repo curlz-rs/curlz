@@ -1,0 +1,22 @@
+---
+source: src/curlz/workspace/bookmark_collection.rs
+assertion_line: 110
+expression: saved_bookmark
+---
+---
+slug: "/protonmail/gpg/:email"
+request:
+  url: "{{protonmail_api_baseurl}}/pks/lookup?op=get&search={{email}}"
+  method: GET
+  headers: []
+  curl_params: []
+  placeholders:
+    - name: email
+      value: ~
+      default: ~
+      prompt: enter an email address
+    - name: protonmail_api_baseurl
+      value: ~
+      default: "https://api.protonmail.ch"
+      prompt: enter the protonmail api baseurl
+

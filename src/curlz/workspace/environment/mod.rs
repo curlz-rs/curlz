@@ -58,6 +58,21 @@ impl From<&Environment> for Object {
     }
 }
 
+impl From<&mut Environment> for Object {
+    /// copies all entries into a [`Object`] for templating purpose
+    fn from(env: &mut Environment) -> Self {
+        let mut ctx = Object::new();
+        for (key, value) in env.0.iter() {
+            ctx.insert(
+                key.to_string().into(),
+                Value::Scalar(value.to_string().into()),
+            );
+        }
+
+        ctx
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

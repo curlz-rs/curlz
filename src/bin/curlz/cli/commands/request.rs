@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 #[derive(Clone, Debug, Parser)]
 #[clap(author, version, about, long_about = None, arg_required_else_help(true))]
-pub struct Cli {
+pub struct RequestCli {
     #[clap(long = "bookmark-as", value_parser)]
     pub save_bookmark_as: Option<String>,
 
@@ -25,9 +25,9 @@ pub struct Cli {
     ///
     /// ## Examples
     /// ```
-    /// curlx -H "X-First-Name: Joe" https://example.com
-    /// curlx -H "User-Agent: yes-please/2000" https://example.com
-    /// curlx -H "Host:" https://example.com
+    /// curlz -H "X-First-Name: Joe" https://example.com
+    /// curlz -H "User-Agent: yes-please/2000" https://example.com
+    /// curlz -H "Host:" https://example.com
     /// ```
     #[clap(long = "header", short = 'H', number_of_values = 1, value_parser)]
     pub headers: Vec<String>,

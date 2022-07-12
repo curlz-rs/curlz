@@ -16,6 +16,10 @@ impl HttpHeaders {
         self.0
             .push((key.as_ref().to_string(), value.as_ref().to_string()));
     }
+
+    pub fn merge(&mut self, other: &HttpHeaders) {
+        self.0.extend(other.0.iter().cloned());
+    }
 }
 
 impl AsRef<[(String, String)]> for HttpHeaders {
