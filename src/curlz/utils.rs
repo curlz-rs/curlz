@@ -1,5 +1,5 @@
 /// parses pairs like `"key=value"` strings into tuples of `Option<(key, value)>`
-/// spaces around the [`separator`] are being removed
+/// spaces around the `separator` are being removed
 #[inline]
 pub fn parse_pairs(pairs: &str, separator: char) -> Option<(&str, &str)> {
     pairs
