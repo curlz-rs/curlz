@@ -40,19 +40,18 @@
     ```
 - [] test other template engines
 
-## Example 1
+## Example #1
 
-In this example we're going to download a pre-configured `.gitignore` for a given language from GitHub via curl:
-```sh
-curl https://api.github.com/gitignore/templates/Rust
-```
+In this example we're going to download a pre-configured `.gitignore` for a given language from GitHub via curl
 
-Now we are doing the same with curlz:
-```sh
-curlz r https://api.github.com/gitignore/templates/Rust
-```
-
-we can also introduce a parameter to support multiple languages:
-```sh
-curlz r 'https://api.github.com/gitignore/templates/{{ lang | title }}'
-```
+- `curl https://api.github.com/gitignore/templates/Rust`
+- the same with curlz: `curlz r https://api.github.com/gitignore/templates/Rust`
+- parametrization: `curlz r 'https://api.github.com/gitignore/templates/{{ lang | title }}'`
+- bookmarking:
+  ```sh
+  curlz r --define lang=Rust --bookmark 'https://api.github.com/gitignore/templates/{{ lang | title }}'
+  Saving this request as a bookmark:
+    Please enter a bookmark name: /gitignore
+  Request bookmarked as: /gitignore`
+  ```
+- Finally, we can keep using the bookmark from now on: `curlz r /gitignore`
