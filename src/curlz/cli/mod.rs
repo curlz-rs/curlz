@@ -1,4 +1,5 @@
 pub mod commands;
+pub mod main;
 
 use clap::Parser;
 

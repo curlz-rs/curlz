@@ -1,10 +1,11 @@
 use crate::data::HttpRequest;
-use crate::ops::{MutOperation, OperationContext};
+use crate::ops::{Operation, OperationContext, Verbosity};
 use crate::Result;
 
+use crate::template::render;
 use anyhow::Context;
-use std::process::{Command, Stdio};
 use minijinja::value::Value;
+use std::process::{Command, Stdio};
 
 #[derive(Debug)]
 pub struct RunCurlCommand<'a> {
@@ -17,43 +18,44 @@ impl<'a> RunCurlCommand<'a> {
     }
 }
 
-impl<'a> MutOperation for RunCurlCommand<'a> {
+impl<'a> Operation for RunCurlCommand<'a> {
     type Output = ();
 
-    fn execute(self, context: &mut OperationContext) -> crate::Result<Self::Output> {
-        let env = context.environment_mut();
+    fn execute(&self, context: &OperationContext) -> crate::Result<Self::Output> {
+        let env = context.environment();
+        let ctx: minijinja::value::Value = env.into();
+        let mut env = minijinja::Environment::new();
 
-        // todo: here the placeholders needs to be merged with the environment
         self.request.placeholders.iter().for_each(|placeholder| {
-            // todo: no unwrapping here
             let value = placeholder
                 .value
                 .as_ref()
                 .unwrap_or_else(|| placeholder.default.as_ref().unwrap());
-            env.insert(&placeholder.name, value);
+            env.add_global(
+                &placeholder.name,
+                Value::from_safe_string(value.to_string()),
+            );
         });
 
-        let ctx: minijinja::value::Value = env.into();
-        let mut env = minijinja::Environment::new();
-        let url = parse(&mut env, &ctx, self.request.url.as_ref(), "url")?;
+        let url = render(&mut env, &ctx, self.request.url.as_ref(), "url")?;
         let method: String = (&self.request.method).into();
 
         let mut cmd = Command::new("curl");
+        if context.verbosity == Verbosity::None {
+            cmd.arg("-s");
+        }
         cmd.args(&["-X", &method])
             .args(
                 &self
                     .request
                     .curl_params
                     .iter()
-                    .map(|s| parse(&mut env, &ctx, s, "param"))
+                    .map(|s| render(&mut env, &ctx, s, "param"))
                     .collect::<Result<Vec<_>>>()?,
             )
-            .args(self.request.headers.as_ref().iter().flat_map(|(k, v) |{
-                let value = parse(&mut env, &ctx, v, k).unwrap();
-                vec![
-                    "-H".to_string(),
-                    format!("{}: {}", k, value)
-                ]
+            .args(self.request.headers.as_ref().iter().flat_map(|(k, v)| {
+                let value = render(&mut env, &ctx, v, k).unwrap();
+                vec!["-H".to_string(), format!("{}: {}", k, value)]
             }))
             .arg(&url);
 
@@ -66,11 +68,4 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
             .map(|_output| ())
             .context("error when starting curl")
     }
-}
-
-fn parse<'source>(env: &mut minijinja::Environment<'source>, ctx: &Value, str: &'source str, name: &'source str) -> Result<String> {
-    env.add_template(name, str)?;
-    let template = env.get_template(name)?;
-
-    template.render(&ctx).map_err(|e| e.into())
 }

@@ -20,7 +20,7 @@ impl LoadBookmark {
 impl Operation for LoadBookmark {
     type Output = Option<Bookmark>;
 
-    fn execute(self, context: &OperationContext) -> crate::Result<Self::Output> {
+    fn execute(&self, context: &OperationContext) -> crate::Result<Self::Output> {
         context
             .bookmark_collection()
             .load(&self.slug, &self.http_method)

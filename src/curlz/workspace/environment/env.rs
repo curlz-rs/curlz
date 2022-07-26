@@ -44,8 +44,8 @@ impl TryFrom<&Path> for Environment {
     }
 }
 
-impl From<&mut Environment> for minijinja::value::Value {
-    fn from(env: &mut Environment) -> Self {
+impl From<&Environment> for minijinja::value::Value {
+    fn from(env: &Environment) -> Self {
         minijinja::value::Value::from_serializable(&env.0)
     }
 }

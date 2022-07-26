@@ -9,11 +9,18 @@ mod load_bookmark;
 mod run_curl;
 mod save_bookmark;
 
+#[derive(Ord, PartialOrd, Eq, PartialEq)]
+pub enum Verbosity {
+    None,
+    Verbose,
+    DoubleVerbose,
+}
+
 /// represents an executable operation
 pub trait Operation {
     type Output;
 
-    fn execute(self, context: &OperationContext) -> Result<Self::Output>;
+    fn execute(&self, context: &OperationContext) -> Result<Self::Output>;
 }
 
 pub trait MutOperation {
@@ -24,6 +31,7 @@ pub trait MutOperation {
 
 /// processes all commands and keeps the application state
 pub struct OperationContext {
+    verbosity: Verbosity,
     bookmark_collection: BookmarkCollection,
     environment: Environment,
 }
@@ -33,6 +41,7 @@ impl OperationContext {
     /// in cases where the workspace folder is not accessible
     pub fn new(env: Environment) -> Result<Self> {
         BookmarkCollection::new().map(|bookmark_collection| Self {
+            verbosity: Verbosity::None,
             bookmark_collection,
             environment: env,
         })

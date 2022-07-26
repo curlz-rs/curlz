@@ -21,7 +21,7 @@ impl<'a> SaveBookmark<'a> {
 impl<'a> Operation for SaveBookmark<'a> {
     type Output = ();
 
-    fn execute(self, context: &OperationContext) -> crate::Result<Self::Output> {
-        context.bookmark_collection().save(&(&self).into())
+    fn execute(&self, context: &OperationContext) -> crate::Result<Self::Output> {
+        context.bookmark_collection().save(&(self).into())
     }
 }

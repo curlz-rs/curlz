@@ -54,5 +54,5 @@ curlz r https://api.github.com/gitignore/templates/Rust
 
 we can also introduce a parameter to support multiple languages:
 ```sh
-curlz 'https://api.github.com/gitignore/templates/{{ lang }}'
+curlz r 'https://api.github.com/gitignore/templates/{{ lang | title }}'
 ```
