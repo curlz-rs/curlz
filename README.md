@@ -15,7 +15,7 @@
 
 - ☑️ .env files
 - ☑️ .yaml env files
-- ☑️ placeholders evaluation, via liquid templates
+- ☑️ placeholder evaluation, with the minijinja template engine
   - in urls
   - in http headers (`-H | --header` arguments)
   - in every other passed curl parameter
@@ -24,7 +24,7 @@
   - http headers
   - http method
   - placeholders
-- ☑️ pass all arguments after `-- ` to curl, that makes drop-in-replacement possible
+- ☑️ pass all arguments after `--` to curl, that makes drop-in-replacement possible
 - ☑️ execute a bookmarked request
 
 ## TODOs
@@ -38,7 +38,6 @@
     ```
     curlz -H "Authorization: Bearer {{ mfa_token }}" -X POST https://api.github.com/user/repos -d '{ "name": "{{ repo_name }}" }'
     ```
-- [] test other template engines
 
 ## Example #1
 
