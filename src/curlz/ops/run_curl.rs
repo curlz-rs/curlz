@@ -2,6 +2,7 @@ use crate::data::HttpRequest;
 use crate::ops::{Operation, OperationContext, Verbosity};
 use crate::Result;
 
+use crate::interactive::prompt_password;
 use crate::template::render;
 use anyhow::Context;
 use minijinja::value::Value;
@@ -25,6 +26,8 @@ impl<'a> Operation for RunCurlCommand<'a> {
         let env = context.environment();
         let ctx: minijinja::value::Value = env.into();
         let mut env = minijinja::Environment::new();
+
+        env.add_function("prompt_password", prompt_password);
 
         self.request.placeholders.iter().for_each(|placeholder| {
             let value = placeholder
