@@ -1,5 +1,5 @@
 use crate::cli::{Cli, Commands};
-use crate::ops::{Operation, OperationContext};
+use crate::ops::{MutOperation, OperationContext};
 use crate::variables::Placeholder;
 use crate::workspace::Environment;
 
@@ -12,9 +12,9 @@ pub fn exec() -> crate::Result<()> {
             let r = &r;
             let placeholders = r.parse_define_as_placeholders();
             let env = create_environment(&r.env_file, &placeholders)?;
-            let ctx = OperationContext::new(env)?;
+            let mut ctx = OperationContext::new(env)?;
 
-            r.execute(&ctx)
+            r.execute(&mut ctx)
         }
         Commands::Bookmark(_b) => {
             todo!()

@@ -2,6 +2,8 @@ pub use load_bookmark::*;
 pub use run_curl::*;
 pub use save_bookmark::*;
 
+use crate::template::Renderer;
+use crate::variables::Placeholder;
 use crate::workspace::{BookmarkCollection, Environment};
 use crate::Result;
 
@@ -26,7 +28,7 @@ pub trait Operation {
 pub trait MutOperation {
     type Output;
 
-    fn execute(self, context: &mut OperationContext) -> Result<Self::Output>;
+    fn execute(&self, context: &mut OperationContext) -> Result<Self::Output>;
 }
 
 /// processes all commands and keeps the application state
@@ -57,5 +59,28 @@ impl OperationContext {
 
     pub fn environment_mut(&mut self) -> &mut Environment {
         &mut self.environment
+    }
+
+    /// creates a new rendere based on the inner ['Environment`]
+    pub fn renderer(&self) -> Renderer {
+        (&self.environment).into()
+    }
+
+    pub fn renderer_with_placeholders<'source>(
+        &'source self,
+        placeholders: &'source [Placeholder],
+    ) -> Renderer<'source> {
+        let mut r = self.renderer();
+
+        placeholders.iter().for_each(|placeholder| {
+            let value = placeholder
+                .value
+                .as_ref()
+                .unwrap_or_else(|| placeholder.default.as_ref().unwrap());
+
+            r.inject_variable(&placeholder.name, value.to_string());
+        });
+
+        r
     }
 }
