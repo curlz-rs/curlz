@@ -15,7 +15,7 @@
 
 - ☑️ .env files
 - ☑️ .yaml env files
-- ☑️ placeholder evaluation, with the minijinja template engine
+- ☑️ placeholder evaluation, with the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine
   - in urls
   - in http headers (`-H | --header` arguments)
   - in every other passed curl parameter
@@ -26,14 +26,15 @@
   - placeholders
 - ☑️ pass all arguments after `--` to curl, that makes drop-in-replacement possible
 - ☑️ execute a bookmarked request
+- [] special placeholder variables that would interact with the user
+  - ☑️ example: prompting for a password `{{ prompt_password() }}
+    ```
+    curlz -- -u "{{ username }}:{{ prompt_password() }}" https://api.github.com/user
+    ```
 
 ## TODOs
 - [] evaluate placeholders at the beginning of an url
 - [] special placeholder variables that would interact with the user
-  - example: prompting for a password `{{ password_prompt() }}
-    ```
-    curlz -- -u "{{ username }}:{{ password_prompt() }}" https://api.github.com/user
-    ```
   - example:  `{{ jwt_token(signin_key, signin_secret) }}`
     ```
     curlz -H "Authorization: Bearer {{ mfa_token }}" -X POST https://api.github.com/user/repos -d '{ "name": "{{ repo_name }}" }'

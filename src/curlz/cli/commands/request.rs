@@ -1,9 +1,11 @@
 use crate::data::{HttpHeaders, HttpMethod, HttpRequest};
-use crate::ops::{LoadBookmark, Operation, OperationContext, RunCurlCommand, SaveBookmark};
+use crate::interactive;
+use crate::ops::{
+    LoadBookmark, MutOperation, Operation, OperationContext, RunCurlCommand, SaveBookmark,
+};
+use crate::utils::parse_pairs;
 use crate::variables::Placeholder;
 
-use crate::interactive;
-use crate::utils::parse_pairs;
 use anyhow::Context;
 use clap::Parser;
 use std::path::PathBuf;
@@ -68,10 +70,10 @@ fn parse_define(define: &str) -> Option<(&str, &str)> {
     parse_pairs(define, '=')
 }
 
-impl Operation for RequestCli {
+impl MutOperation for RequestCli {
     type Output = ();
 
-    fn execute(&self, ctx: &OperationContext) -> crate::Result<Self::Output> {
+    fn execute(&self, ctx: &mut OperationContext) -> crate::Result<Self::Output> {
         let placeholders = self.parse_define_as_placeholders();
         let mut raw = self.raw.clone();
 

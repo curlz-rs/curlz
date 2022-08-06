@@ -74,6 +74,8 @@ jobs:
       - uses: Swatinem/rust-cache@v1
       - name: cargo test
         run: cargo test --all --locked -- -Z unstable-options
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: smoke tests
         run: |
           cargo run -- --version
