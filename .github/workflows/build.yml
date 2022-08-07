@@ -60,6 +60,9 @@ jobs:
       matrix:
         version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
         rust: [ nightly, stable ]
+        cargo-cmd:
+          - test --all --locked -- -Z unstable-options
+          - insta test
     runs-on: ${{ matrix.version }}
     continue-on-error: ${{ matrix.rust == 'nightly' }}
     environment: build
@@ -72,8 +75,9 @@ jobs:
           default: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - name: cargo test
-        run: cargo test --all --locked -- -Z unstable-options
+      - run: cargo install cargo-insta
+      - name: test
+        run: cargo ${{ matrix['cargo-cmd'] }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: smoke tests

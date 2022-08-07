@@ -1,6 +1,6 @@
 [package]
 name = "curlz"
-authors = ["Sven Assmann <sven.assmann.it@gmail.com>"]
+authors = ["Sven Assmann <sven@d34dl0ck.me>"]
 description = "curl wrapper with placeholder, bookmark and environment powers just like postman"
 version = "0.1.0-alpha.1"
 edition = "2021"
@@ -10,29 +10,23 @@ include = ["src/**/*", "LICENSE", "*.md"]
 [dependencies]
 clap = { version = "3.2", features = ["derive", "std", "cargo"], default-features = false }
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.8"
+serde_yaml = "0.9"
 dotenvy = { version = "0.15" }
 anyhow = "1.0"
 convert_case = "0.5"
 dialoguer = "0.10"
 filenamify = "0.1"
 
-# todo: re-evaluate template engine, try tera and mini-jinja
 minijinja = "0.17.0"
 
-#liquid = "0.26"
-#liquid-core = "0.26"
-
 [dev-dependencies]
-insta = "1.15"
+insta = "1.17"
 tempfile = "3.3"
 assert_cmd = "2.0"
 predicates = "2.1"
 
 [[bin]]
 name = "curlz"
-#test = false
-#doc = false
 
 [lib]
 name = "curlz"

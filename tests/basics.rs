@@ -1,4 +1,5 @@
 use assert_cmd::prelude::*;
+use dotenvy::dotenv;
 use predicates::prelude::*;
 
 fn binary() -> Result<std::process::Command, assert_cmd::cargo::CargoError> {
@@ -16,6 +17,8 @@ fn should_show_usage_when_no_args_passed() {
 
 #[test]
 fn should_request_a_url() {
+    dotenv().unwrap();
+
     let token = std::env::var("GITHUB_TOKEN").unwrap();
     binary()
         .unwrap()
