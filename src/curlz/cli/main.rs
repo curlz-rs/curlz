@@ -1,18 +1,30 @@
 use crate::cli::{Cli, Commands};
-use crate::ops::{MutOperation, OperationContext};
+use crate::ops::{MutOperation, OperationContext, Verbosity};
 use crate::variables::Placeholder;
 use crate::workspace::Environment;
 
 use clap::Parser;
+use env_logger::Target;
 use std::path::Path;
 
 pub fn exec() -> crate::Result<()> {
-    match Cli::parse().command {
+    let args = Cli::parse();
+    env_logger::Builder::new()
+        .filter_level(args.verbose.log_level_filter())
+        .target(Target::Stderr)
+        .init();
+    let verbosity = if args.verbose.is_silent() {
+        Verbosity::Silent
+    } else {
+        Verbosity::Verbose
+    };
+
+    match args.command {
         Commands::Request(r) => {
             let r = &r;
             let placeholders = r.parse_define_as_placeholders();
             let env = create_environment(&r.env_file, &placeholders)?;
-            let mut ctx = OperationContext::new(env)?;
+            let mut ctx = OperationContext::new(env, verbosity)?;
 
             r.execute(&mut ctx)
         }

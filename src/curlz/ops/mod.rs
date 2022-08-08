@@ -13,9 +13,8 @@ mod save_bookmark;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq)]
 pub enum Verbosity {
-    None,
+    Silent,
     Verbose,
-    DoubleVerbose,
 }
 
 /// represents an executable operation
@@ -41,9 +40,9 @@ pub struct OperationContext {
 impl OperationContext {
     /// ## fallible
     /// in cases where the workspace folder is not accessible
-    pub fn new(env: Environment) -> Result<Self> {
+    pub fn new(env: Environment, verbosity: Verbosity) -> Result<Self> {
         BookmarkCollection::new().map(|bookmark_collection| Self {
-            verbosity: Verbosity::None,
+            verbosity,
             bookmark_collection,
             environment: env,
         })
