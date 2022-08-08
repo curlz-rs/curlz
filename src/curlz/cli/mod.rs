@@ -2,6 +2,7 @@ pub mod commands;
 pub mod main;
 
 use clap::Parser;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 
 pub use commands::*;
 
@@ -10,6 +11,8 @@ pub use commands::*;
 #[clap(propagate_version = true)]
 #[clap(name = "curlz")]
 pub struct Cli {
+    #[clap(flatten)]
+    verbose: Verbosity<InfoLevel>,
     #[clap(subcommand)]
     pub command: Commands,
 }

@@ -3,6 +3,7 @@ use crate::ops::{MutOperation, OperationContext, Verbosity};
 use crate::Result;
 
 use anyhow::Context;
+use log::debug;
 use std::process::{Command, Stdio};
 
 #[derive(Debug)]
@@ -26,7 +27,7 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
         let method: String = (&self.request.method).into();
 
         let mut cmd = Command::new("curl");
-        if context.verbosity == Verbosity::None {
+        if context.verbosity.eq(&Verbosity::Silent) {
             cmd.arg("-s");
         }
         cmd.args(&["-X", &method])
@@ -44,8 +45,7 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
             }))
             .arg(&url);
 
-        // todo: only display this in verbose mode
-        // println!("{:?}", &cmd);
+        debug!("curl cmd: \n  {:?}", &cmd);
 
         cmd.stdout(Stdio::inherit())
             .stderr(Stdio::inherit())

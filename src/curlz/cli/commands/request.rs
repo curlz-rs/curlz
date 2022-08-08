@@ -8,12 +8,17 @@ use crate::variables::Placeholder;
 
 use anyhow::Context;
 use clap::Parser;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
+use log::info;
 use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Parser)]
 #[clap(author, version, about, long_about = None, arg_required_else_help(true))]
 pub struct RequestCli {
+    #[clap(flatten)]
+    pub verbose: Verbosity<InfoLevel>,
+
     #[clap(long = "bookmark-as", value_parser)]
     pub save_bookmark_as: Option<String>,
 
@@ -127,13 +132,12 @@ impl MutOperation for RequestCli {
             let slug = if let Some(answer) = self.save_bookmark_as.as_ref() {
                 answer.clone()
             } else {
-                println!("Saving this request as a bookmark:");
-                interactive::user_question("  Please enter a bookmark name", &None)?
+                interactive::user_question("Please enter a bookmark name", &None)?
             };
 
             SaveBookmark::new(slug.as_str(), &request).execute(ctx)?;
 
-            println!("Request bookmarked as: {}", slug);
+            info!("Request bookmarked as: {}", slug);
         }
 
         Ok(())

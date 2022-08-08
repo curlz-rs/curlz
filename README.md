@@ -26,19 +26,24 @@
   - placeholders
 - ☑️ pass all arguments after `--` to curl, that makes drop-in-replacement possible
 - ☑️ execute a bookmarked request
-- [] special placeholder variables that would interact with the user
-  - ☑️ example: prompting for a password `{{ prompt_password() }}
-    ```
+- ☑️ special placeholder variables that would interact with the user
+  - ☑️ prompting for a password as `{{ prompt_password() }}
+    ```sh
     curlz -- -u "{{ username }}:{{ prompt_password() }}" https://api.github.com/user
     ```
 
 ## TODOs
 - [] evaluate placeholders at the beginning of an url
-- [] special placeholder variables that would interact with the user
-  - example:  `{{ jwt_token(signin_key, signin_secret) }}`
+- [] special placeholder for developers, like `jwt_token` or `mfa_token` 
+  - example:  `{{ jwt_token(signin_key, signin_secret) }}`, where `signin_key` and `signin_secret` are first looked up 
+    at the environment file as variable or else taken then as given.
     ```
-    curlz -H "Authorization: Bearer {{ mfa_token }}" -X POST https://api.github.com/user/repos -d '{ "name": "{{ repo_name }}" }'
+    curlz -H "Authorization: Bearer {{ jwt_token(signin_key, signin_secret) }}" -X POST https://api.github.com/user/repos -d '{ "name": "{{ repo_name }}" }'
     ```
+- [] prompting for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
+  ```sh
+  curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user
+  ```
 
 ## Example #1
 
