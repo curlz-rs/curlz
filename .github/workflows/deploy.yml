@@ -33,16 +33,16 @@ jobs:
           registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
   # https://github.com/mislav/bump-homebrew-formula-action
-  publish-to-brew:
-    name: post / homebrew
-    needs: [publish]
-    runs-on: macos-latest
-    steps:
-      - uses: mislav/bump-homebrew-formula-action@v1
-        with:
-          formula-name: t-rec
-        env:
-          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
+#  publish-to-brew:
+#    name: post / homebrew
+#    needs: [publish]
+#    runs-on: macos-latest
+#    steps:
+#      - uses: mislav/bump-homebrew-formula-action@v1
+#        with:
+#          formula-name: curlz
+#        env:
+#          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
 
   release:
     name: post / github release
