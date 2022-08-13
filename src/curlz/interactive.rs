@@ -30,3 +30,19 @@ pub fn prompt_password(
             .with_source(e)
         })
 }
+
+/// prompt for something that has a name, to be used in a minijinja template
+pub fn prompt_for(_state: &minijinja::State, prompt: Value) -> std::result::Result<String, Error> {
+    let prompt = prompt.to_string();
+    Input::new()
+        .with_prompt(prompt)
+        .allow_empty(true)
+        .interact()
+        .map_err(|e| {
+            Error::new(
+                ErrorKind::ImpossibleOperation,
+                "cannot read prompt from stdin",
+            )
+            .with_source(e)
+        })
+}

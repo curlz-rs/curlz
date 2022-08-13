@@ -1,4 +1,4 @@
-use crate::interactive::prompt_password;
+use crate::interactive::{prompt_for, prompt_password};
 
 use minijinja::value::Value;
 use minijinja::Environment;
@@ -19,6 +19,7 @@ impl<'source> Renderer<'source> {
         let ctx: Value = env.into();
         let mut env = Environment::new();
         env.add_function("prompt_password", prompt_password);
+        env.add_function("prompt_for", prompt_for);
 
         Self { env, ctx }
     }
