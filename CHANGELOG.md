@@ -15,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 ### Contributors
 
+## [0.1.0-alpha.2] - 2022-08-16
+[0.1.0-alpha.2]: https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.1..v0.1.0-alpha.2
+
+### Added
+
+- special placeholder variables that would interact with the user
+  - prompt for interactive input with a label as for example `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
+    `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
+
+### Contributors
+[@sassman](https://github.com/sassman)
+
 ## [0.1.0-alpha.1] - 2022-08-07
 [0.1.0-alpha.1]: https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.1
 
