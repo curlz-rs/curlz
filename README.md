@@ -27,7 +27,7 @@
 - ☑️ pass all arguments after `--` to curl, that makes drop-in-replacement possible
 - ☑️ execute a bookmarked request
 - ☑️ special placeholder variables that would interact with the user
-  - ☑️ prompt for a password as `{{ prompt_password() }}
+  - ☑️ prompt for a password as `{{ prompt_password() }}` 
     `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
   - ☑️ prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
     `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
