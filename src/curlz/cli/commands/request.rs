@@ -6,6 +6,7 @@ use crate::ops::{
 use crate::utils::parse_pairs;
 use crate::variables::Placeholder;
 
+use crate::cli::HeaderArgs;
 use anyhow::Context;
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
@@ -44,7 +45,7 @@ pub struct RequestCli {
     /// curlz -H "User-Agent: yes-please/2000" https://example.com
     /// curlz -H "Host:" https://example.com
     /// ```
-    #[clap(long = "header", short = 'H', number_of_values = 1, value_parser)]
+    #[clap(long = "header", short = 'H', value_parser)]
     pub headers: Vec<String>,
 
     #[clap(long = "json", action)]
@@ -84,7 +85,10 @@ impl MutOperation for RequestCli {
 
         let method = extract_method(&mut raw)
             .unwrap_or_else(|| HttpMethod::from_str(self.http_method.as_str()))?;
-        let mut headers = extract_headers(&mut raw);
+        let mut headers: HttpHeaders = self.headers.as_slice().into();
+        let (mut raw, headers_args) = extract_headers(&raw);
+        let headers_raw: HttpHeaders = headers_args.into();
+        headers.merge(&headers_raw);
         if self.json {
             headers.push("Content-Type", "application/json");
             headers.push("Accept", "application/json");
@@ -146,40 +150,28 @@ impl MutOperation for RequestCli {
 
 /// checks if a string is a URL
 fn is_url(potential_url: impl AsRef<str>) -> bool {
-    potential_url
-        .as_ref()
-        .trim_start_matches('\'')
-        .starts_with("http")
+    let trimmed_url = potential_url.as_ref().trim_start_matches('\'');
+
+    trimmed_url.starts_with("http") || trimmed_url.starts_with("{{")
 }
 
 /// Extracts the http headers from the command line arguments
 /// If a header `-H | --header` is found, it's removed from the `raw_args`
-fn extract_headers(raw_args: &mut Vec<String>) -> HttpHeaders {
-    let mut headers = HttpHeaders::default();
-    raw_args
-        .clone()
+fn extract_headers(raw_args: &Vec<String>) -> (Vec<String>, HeaderArgs) {
+    let headers = HeaderArgs::from(raw_args);
+
+    let non_header_args = raw_args
         .iter()
         .enumerate()
         .step_by(2)
         .zip(raw_args.clone().iter().enumerate().skip(1).step_by(2))
-        .filter_map(|((ik, key), (iv, value))| match key.as_str() {
-            "-H" | "--header" => Some(((ik, key), (iv, value))),
-            _ => None,
+        .filter_map(|((_, key), (_, value))| match key.as_str() {
+            "-H" | "--header" => None,
+            _ => Some(format!("{} {}", key, value)),
         })
-        // now it gets ugly #1
-        .rev()
-        .for_each(|((ki, _key), (kv, value))| {
-            // ugly the #2
-            raw_args.swap_remove(kv);
-            raw_args.swap_remove(ki);
-            let (key, value) = value.split_once(':').unwrap();
-            headers.push(key.trim(), value.trim());
-        });
+        .collect();
 
-    // ugly the #3
-    headers.reverse();
-
-    headers
+    (non_header_args, headers)
 }
 
 /// Extracts the http method from the command line arguments
@@ -267,20 +259,24 @@ mod tests {
             "foo: bar",
             "--header",
             "Accept: application/json",
+            "--header",
+            r#"Authorization: Baerer {{ jwt({"foo": "bar"}) }}"#,
             "http://example.com",
         ]
         .iter()
         .map(|s| s.to_string())
         .collect();
-        let headers = extract_headers(&mut args);
+        let (args, headers) = extract_headers(&mut args);
         assert_eq!(
             headers.as_ref(),
             &[
-                ("foo".to_string(), "bar".to_string()),
-                ("Accept".to_string(), "application/json".to_string())
+                "foo: bar".to_string(),
+                "Accept: application/json".to_string(),
+                r#"Authorization: Baerer {{ jwt({"foo": "bar"}) }}"#.to_string(),
             ]
         );
+        // TODO: it's unclear why this here fails:
         assert_eq!(args.len(), 1);
-        assert_eq!(args.pop(), Some("http://example.com".to_string()));
+        assert_eq!(args.last(), Some(&"http://example.com".to_string()));
     }
 }

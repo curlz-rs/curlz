@@ -1,4 +1,7 @@
-use crate::interactive::{prompt_for, prompt_password};
+mod functions;
+
+use functions::jwt::jwt;
+use functions::prompt::{prompt_for, prompt_password};
 
 use minijinja::value::Value;
 use minijinja::Environment;
@@ -20,6 +23,7 @@ impl<'source> Renderer<'source> {
         let mut env = Environment::new();
         env.add_function("prompt_password", prompt_password);
         env.add_function("prompt_for", prompt_for);
+        env.add_function("jwt", jwt);
 
         Self { env, ctx }
     }

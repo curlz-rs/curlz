@@ -7,4 +7,7 @@ pub mod utils;
 pub mod variables;
 pub mod workspace;
 
+#[cfg(test)]
+pub mod test_utils;
+
 pub type Result<T> = anyhow::Result<T>;

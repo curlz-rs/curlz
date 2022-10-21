@@ -16,11 +16,15 @@ serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 dotenvy = { version = "0.15" }
 anyhow = "1.0"
-convert_case = "0.5"
+convert_case = "0.6"
 dialoguer = "0.10"
 filenamify = "0.1"
+chrono = "0.4"
 
-minijinja = "0.17.0"
+minijinja = "0.23"
+
+jsonwebtoken = "8.1"
+serde_json = { version = "1.0", features = ["preserve_order"] }
 
 [dev-dependencies]
 insta = "1.17"

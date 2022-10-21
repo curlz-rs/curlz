@@ -47,11 +47,10 @@ In this example we're going to download a pre-configured `.gitignore` for a give
 - the same with curlz: `curlz r https://api.github.com/gitignore/templates/Rust`
 - Add a placeholder that is interactively requested 
   `curlz r 'https://api.github.com/gitignore/templates/{{ prompt_for("Language") | title }}'`
-- Now lets bookmark this request:
+- Now let's bookmark this request:
   ```sh
   curlz r --bookmark 'https://api.github.com/gitignore/templates/{{ prompt_for("Language") | title }}'
   Language: rust
   Please enter a bookmark name: gitignore
   ```
-- Finally, we can keep using the bookmark from now on
-  `curlz r gitignore`
+- Finally, we can keep using the bookmark from now on: `curlz r gitignore`
