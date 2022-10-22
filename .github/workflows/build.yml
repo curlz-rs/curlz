@@ -65,7 +65,6 @@ jobs:
           - insta test
     runs-on: ${{ matrix.version }}
     continue-on-error: ${{ matrix.rust == 'nightly' }}
-    environment: build
     steps:
       - uses: actions/checkout@v2
       - name: setup | rust
