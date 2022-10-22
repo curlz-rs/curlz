@@ -254,7 +254,7 @@ mod tests {
 
     #[test]
     fn should_extract_headers() {
-        let mut args = vec![
+        let args = vec![
             "-H",
             "foo: bar",
             "--header",
@@ -264,9 +264,9 @@ mod tests {
             "http://example.com",
         ]
         .iter()
-        .map(|s| s.to_string())
+        .map(ToString::to_string)
         .collect();
-        let (args, headers) = extract_headers(&mut args);
+        let (args, headers) = extract_headers(&args);
         assert_eq!(
             headers.as_ref(),
             &[
