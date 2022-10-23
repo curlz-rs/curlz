@@ -155,21 +155,24 @@ fn is_url(potential_url: impl AsRef<str>) -> bool {
     trimmed_url.starts_with("http") || trimmed_url.starts_with("{{")
 }
 
-/// Extracts the http headers from the command line arguments
+/// Extracts the http headers from command line arguments
 /// If a header `-H | --header` is found, it's removed from the `raw_args`
 fn extract_headers(raw_args: &Vec<String>) -> (Vec<String>, HeaderArgs) {
     let headers = HeaderArgs::from(raw_args);
 
-    let non_header_args = raw_args
-        .iter()
-        .enumerate()
-        .step_by(2)
-        .zip(raw_args.clone().iter().enumerate().skip(1).step_by(2))
-        .filter_map(|((_, key), (_, value))| match key.as_str() {
-            "-H" | "--header" => None,
-            _ => Some(format!("{} {}", key, value)),
-        })
-        .collect();
+    let mut non_header_args = vec![];
+    let mut i = 0_usize;
+    while i < raw_args.len() {
+        match raw_args.get(i).unwrap().as_str() {
+            "-H" | "--header" => {
+                i += 2;
+            }
+            v => {
+                non_header_args.push(v.to_string());
+                i += 1;
+            }
+        }
+    }
 
     (non_header_args, headers)
 }
@@ -255,6 +258,7 @@ mod tests {
     #[test]
     fn should_extract_headers() {
         let args = vec![
+            "-vvv",
             "-H",
             "foo: bar",
             "--header",
@@ -276,7 +280,8 @@ mod tests {
             ]
         );
         // TODO: it's unclear why this here fails:
-        assert_eq!(args.len(), 1);
+        assert_eq!(args.len(), 2);
+        assert_eq!(args.first(), Some(&"-vvv".to_string()));
         assert_eq!(args.last(), Some(&"http://example.com".to_string()));
     }
 }

@@ -8,16 +8,19 @@ impl AsRef<[String]> for HeaderArgs {
 
 impl From<&Vec<String>> for HeaderArgs {
     fn from(raw_headers: &Vec<String>) -> Self {
-        let headers = raw_headers
-            .iter()
-            .enumerate()
-            .step_by(2)
-            .zip(raw_headers.clone().iter().enumerate().skip(1).step_by(2))
-            .filter_map(|((_, key), (_, value))| match key.as_str() {
-                "-H" | "--header" => Some(value.to_string()),
-                _ => None,
-            })
-            .collect::<Vec<_>>();
+        let mut headers = vec![];
+        let mut i = 0_usize;
+        while i < raw_headers.len() {
+            match raw_headers.get(i).unwrap().as_str() {
+                "-H" | "--header" => {
+                    headers.push(raw_headers.get(i + 1).unwrap().to_string());
+                    i += 2;
+                }
+                _ => {
+                    i += 1;
+                }
+            }
+        }
 
         HeaderArgs(headers)
     }
