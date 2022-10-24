@@ -31,6 +31,7 @@ insta = "1.17"
 tempfile = "3.3"
 assert_cmd = "2.0"
 predicates = "2.1"
+rstest = "0.15"
 
 [[bin]]
 name = "curlz"

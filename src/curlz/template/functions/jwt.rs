@@ -55,6 +55,7 @@ mod tests {
     use crate::test_utils::RenderBuilder;
     use chrono::{Duration, Timelike};
     use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+    use rstest::rstest;
     use serde::Deserialize;
 
     #[test]
@@ -65,18 +66,17 @@ mod tests {
             .render(r#"Bearer {{ jwt({"sub": "b@b.com"}) }}"#);
     }
 
-    #[test]
-    fn should_set_expiry_when_missing() {
-        let s = RenderBuilder::new()
-            .with_env_var("jwt_signing_key", "000")
-            .with_function("jwt", jwt)
-            .render(r#"Bearer {{ jwt({"sub": "b@b.com"}) }}"#);
-
-        let s2 = RenderBuilder::new()
-            .with_function("jwt", jwt)
-            .render(r#"Bearer {{ jwt({"sub": "b@b.com"}, "000") }}"#);
-
-        assert_eq!(s, s2, "the two tokens should be identical");
+    #[rstest]
+    #[case(
+        r#"Bearer {{ jwt({"sub": "b@b.com"}, "000") }}"#, 
+        RenderBuilder::new().with_function("jwt", jwt)
+    )]
+    #[case(
+        r#"Bearer {{ jwt({"sub": "b@b.com"}) }}"#, 
+        RenderBuilder::new().with_function("jwt", jwt).with_env_var("jwt_signing_key", "000")
+    )]
+    fn should_set_expiry_when_missing(#[case] token: &str, #[case] builder: RenderBuilder) {
+        let s = builder.render(token);
 
         #[derive(Deserialize)]
         struct Claims {
