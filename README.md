@@ -31,14 +31,18 @@
     `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
   - ☑️prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
     `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
+- ☑️evaluate placeholders at the beginning of an url like:
+  ```sh
+  curlz r --define 'host=https://httpbin.org' '{{host}}/get?show_env={{ prompt_for("show_env") }}'
+  ```
 - ☑️special placeholder for developers, like for Json Web Tokens (JWT)
   - example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
-    ```shell
+    ```sh
     curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
     ```
 
 ## TODOs
-- [] evaluate placeholders at the beginning of an url
+- [ ] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
 
 ## Example #1
 
