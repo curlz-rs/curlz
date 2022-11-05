@@ -21,7 +21,7 @@ dialoguer = "0.10"
 filenamify = "0.1"
 chrono = "0.4"
 
-minijinja = "0.23"
+minijinja = "0.25"
 
 jsonwebtoken = "8.1"
 serde_json = { version = "1.0", features = ["preserve_order"] }
