@@ -67,4 +67,7 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   - `claims`: to be a map of key value pairs like `{"uid": "1234"}` that are the payload of the JWT
   - `signing_key`: to be a string, this is optional and can be provided at the environment file with a variable named `jwt_signing_key`
 - output: string is a Json Web Token (JWT)
-- notes: the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
+- notes: 
+  - the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
+  - the claim `exp` expiry time is set to in 15min by default, but can be overwritten
+  - the claim `iat` issued at timestamp is set automatically and cannot be overwritten
