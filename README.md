@@ -31,8 +31,8 @@
     `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
   - ☑️prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
     `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
-- ☑️special placeholder for developers, like `jwt_token`
-  - example:  `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
+- ☑️special placeholder for developers, like for Json Web Tokens (JWT)
+  - example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
     ```shell
     curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
     ```
@@ -55,3 +55,12 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   Please enter a bookmark name: gitignore
   ```
 - Finally, we can keep using the bookmark from now on: `curlz r gitignore`
+
+## Template functions
+
+### Json Web Token - `jwt(claims: map, [signing_key: string])`
+- arguments:
+  - `claims`: to be a map of key value pairs like `{"uid": "1234"}` that are the payload of the JWT
+  - `signing_key`: to be a string, this is optional and can be provided at the environment file with a variable named `jwt_signing_key`
+- output: string is a Json Web Token (JWT)
+- notes: the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
