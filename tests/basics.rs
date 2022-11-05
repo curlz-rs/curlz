@@ -61,7 +61,7 @@ impl CurlzTest {
         let url = format!("{}{}", &self.mock_server.uri(), self.url_part);
         binary()
             .unwrap()
-            .args(&["r", url.as_str()])
+            .args(["r", url.as_str()])
             .assert()
             .success()
             .stdout(predicate::str::contains(&self.payload))

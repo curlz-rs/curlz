@@ -30,7 +30,7 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
         if context.verbosity.eq(&Verbosity::Silent) {
             cmd.arg("-s");
         }
-        cmd.args(&["-X", &method])
+        cmd.args(["-X", &method])
             .args(
                 &self
                     .request
