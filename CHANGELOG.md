@@ -8,12 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Unreleased]: https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.1...HEAD
 
 ### Added
+- special template function `jwt` for json web tokens [see #6](https://github.com/curlz-rs/curlz/issues/6)
+
 ### Changed
 ### Deprecated 
 ### Removed
 ### Fixed
 ### Security
 ### Contributors
+- [@sassman](https://github.com/sassman)
 
 ## [0.1.0-alpha.2] - 2022-08-16
 [0.1.0-alpha.2]: https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.1..v0.1.0-alpha.2
