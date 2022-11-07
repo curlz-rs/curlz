@@ -31,14 +31,18 @@
     `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
   - ☑️prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
     `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
+- ☑️evaluate placeholders at the beginning of an url like:
+  ```sh
+  curlz r --define 'host=https://httpbin.org' '{{host}}/get?show_env={{ prompt_for("show_env") }}'
+  ```
 - ☑️special placeholder for developers, like for Json Web Tokens (JWT)
   - example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
-    ```shell
+    ```sh
     curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
     ```
 
 ## TODOs
-- [] evaluate placeholders at the beginning of an url
+- [ ] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
 
 ## Example #1
 
@@ -63,4 +67,7 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   - `claims`: to be a map of key value pairs like `{"uid": "1234"}` that are the payload of the JWT
   - `signing_key`: to be a string, this is optional and can be provided at the environment file with a variable named `jwt_signing_key`
 - output: string is a Json Web Token (JWT)
-- notes: the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
+- notes: 
+  - the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
+  - the claim `exp` expiry time is set to in 15min by default, but can be overwritten
+  - the claim `iat` issued at timestamp is set automatically and cannot be overwritten
