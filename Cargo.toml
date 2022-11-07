@@ -19,7 +19,7 @@ anyhow = "1.0"
 convert_case = "0.6"
 dialoguer = "0.10"
 filenamify = "0.1"
-chrono = "0.4"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
 
 minijinja = "0.25"
 
