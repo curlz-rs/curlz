@@ -1,8 +1,8 @@
 [package]
 name = "curlz"
-authors = ["Sven Assmann <sven@d34dl0ck.me>"]
+authors = ["Sven Kanoldt <sven@d34dl0ck.me>"]
 description = "curl wrapper with placeholder, bookmark and environment powers just like postman"
-version = "0.1.0-alpha.2"
+version = "0.1.0-alpha.3"
 edition = "2021"
 license = "GPL-3.0-only"
 include = ["src/**/*", "LICENSE", "*.md"]
