@@ -1,7 +1,7 @@
 use crate::cli::HeaderArgs;
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct HttpHeaders(Vec<(String, String)>);
 
 impl HttpHeaders {

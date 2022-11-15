@@ -6,6 +6,7 @@ slug: /protonmail/gpg/:email
 request:
   url: '{{protonmail_api_baseurl}}/pks/lookup?op=get&search={{email}}'
   method: GET
+  version: HTTP/1.1
   headers: []
   curl_params: []
   placeholders:

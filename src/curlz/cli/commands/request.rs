@@ -7,6 +7,7 @@ use crate::utils::parse_pairs;
 use crate::variables::Placeholder;
 
 use crate::cli::HeaderArgs;
+use crate::data::HttpVersion::Http11;
 use anyhow::Context;
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
@@ -100,6 +101,7 @@ impl MutOperation for RequestCli {
                     // todo: also replace placeholders in there..
                     url: bookmark_or_url.to_string(),
                     method,
+                    version: Http11,
                     headers,
                     placeholders,
                     // todo: implement placeholder scanning..
@@ -123,6 +125,7 @@ impl MutOperation for RequestCli {
                 .map(|url| HttpRequest {
                     url,
                     method,
+                    version: Http11,
                     headers,
                     placeholders,
                     // todo: implement placeholder scanning..
