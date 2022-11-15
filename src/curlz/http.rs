@@ -9,7 +9,7 @@ use pest::Parser;
 struct HttpParser;
 
 #[allow(dead_code)]
-fn parse_request_file(req_file: impl AsRef<str>) -> Vec<Bookmark> {
+fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow::Error> {
     let mut requests = vec![];
 
     let req_file = req_file.as_ref();
@@ -24,7 +24,7 @@ fn parse_request_file(req_file: impl AsRef<str>) -> Vec<Bookmark> {
             Rule::request => {
                 requests.push(Bookmark {
                     slug: slug.to_owned(),
-                    request: HttpRequest::from(line),
+                    request: HttpRequest::try_from(line)?,
                 });
             }
             Rule::delimiter => {
@@ -37,12 +37,14 @@ fn parse_request_file(req_file: impl AsRef<str>) -> Vec<Bookmark> {
         }
     }
 
-    requests
+    Ok(requests)
 }
 
 /// todo: write tests
-impl From<Pair<'_, Rule>> for HttpHeaders {
-    fn from(headers: Pair<'_, Rule>) -> Self {
+impl TryFrom<Pair<'_, Rule>> for HttpHeaders {
+    type Error = anyhow::Error;
+
+    fn try_from(headers: Pair<'_, Rule>) -> Result<Self, Self::Error> {
         match headers.as_rule() {
             Rule::headers => {
                 let mut h: HttpHeaders = Default::default();
@@ -54,16 +56,17 @@ impl From<Pair<'_, Rule>> for HttpHeaders {
 
                     h.push(name, value);
                 }
-                h
+                Ok(h)
             }
-            _ => unreachable!("this should not happen"),
+            _ => Err(anyhow!("The parsing result are not a valid `headers`")),
         }
     }
 }
 
 /// todo: write tests
-impl From<Pair<'_, Rule>> for HttpRequest {
-    fn from(request: Pair<'_, Rule>) -> Self {
+impl TryFrom<Pair<'_, Rule>> for HttpRequest {
+    type Error = anyhow::Error;
+    fn try_from(request: Pair<'_, Rule>) -> Result<Self, Self::Error> {
         match request.as_rule() {
             Rule::request => {
                 let mut inner_rules = request.into_inner();
@@ -82,18 +85,17 @@ impl From<Pair<'_, Rule>> for HttpRequest {
                 dbg!(&version);
                 // dbg!(body);
 
-                Self {
+                Ok(Self {
                     url,
                     method,
                     version,
-                    headers: headers.map(HttpHeaders::from).unwrap_or_default(),
+                    // todo get rid of unwrap()
+                    headers: headers.map(HttpHeaders::try_from).unwrap().unwrap(),
                     curl_params: Default::default(),
                     placeholders: Default::default(),
-                }
+                })
             }
-            _ => {
-                unreachable!("the client code ensures this cannot happen!")
-            }
+            _ => Err(anyhow!("The parsing result is not a valid `request`")),
         }
     }
 }
@@ -160,7 +162,10 @@ mod tests {
         #[case] expected: Bookmark,
     ) {
         assert_eq!(
-            parse_request_file(request_file_contents).pop().unwrap(),
+            parse_request_file(request_file_contents)
+                .unwrap()
+                .pop()
+                .unwrap(),
             expected
         );
     }
