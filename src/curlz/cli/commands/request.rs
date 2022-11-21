@@ -1,4 +1,4 @@
-use crate::data::{HttpHeaders, HttpMethod, HttpRequest};
+use crate::data::{HttpHeaders, HttpMethod, HttpRequest, HttpUri};
 use crate::interactive;
 use crate::ops::{
     LoadBookmark, MutOperation, Operation, OperationContext, RunCurlCommand, SaveBookmark,
@@ -99,7 +99,7 @@ impl MutOperation for RequestCli {
                 // here we are certain we got an URL
                 HttpRequest {
                     // todo: also replace placeholders in there..
-                    url: bookmark_or_url.to_string(),
+                    url: bookmark_or_url.to_string().try_into()?,
                     method,
                     version: Http11,
                     headers,
@@ -210,11 +210,12 @@ fn extract_method(raw_args: &mut Vec<String>) -> Option<crate::Result<HttpMethod
 /// extracts a `http://` or `https://` URL from the command line arguments `raw_args`
 /// if a URL is found it's removed from the `raw_args` vector and returned
 /// If no URL is found, returns `None`
-fn extract_url(raw_args: &mut Vec<String>) -> Option<String> {
+fn extract_url(raw_args: &mut Vec<String>) -> Option<HttpUri> {
     if let Some(potential_url) = raw_args.last().cloned() {
         if potential_url.trim_start_matches('\'').starts_with("http") {
             raw_args.pop();
-            Some(potential_url)
+            // todo: no unwrap here:
+            Some(potential_url.try_into().unwrap())
         } else if potential_url.starts_with("{{") {
             todo!("placeholder evaluation at the beginning of URLs")
         } else {
@@ -243,7 +244,10 @@ mod tests {
             .map(|s| s.to_string())
             .collect();
         let url = extract_url(&mut args);
-        assert_eq!(url, Some("http://example.com".to_string()));
+        assert_eq!(
+            url,
+            Some("http://example.com".to_string().try_into().unwrap())
+        );
         assert_eq!(args.len(), 2);
     }
 

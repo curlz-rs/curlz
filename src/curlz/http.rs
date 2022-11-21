@@ -1,5 +1,5 @@
 //! a module for experimenting with the http language that the rest client uses
-use crate::data::{Bookmark, HttpHeaders, HttpMethod, HttpRequest, HttpVersion};
+use crate::data::{Bookmark, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
 use anyhow::anyhow;
 use pest::iterators::Pair;
 use pest::Parser;
@@ -71,7 +71,7 @@ impl TryFrom<Pair<'_, Rule>> for HttpRequest {
             Rule::request => {
                 let mut inner_rules = request.into_inner();
                 let method: HttpMethod = inner_rules.next().unwrap().try_into()?;
-                let url = inner_rules.next().unwrap().as_str().to_string();
+                let url: HttpUri = inner_rules.next().unwrap().try_into()?;
                 let version: HttpVersion = inner_rules.next().unwrap().try_into()?;
                 let headers = inner_rules
                     .next()
@@ -94,6 +94,17 @@ impl TryFrom<Pair<'_, Rule>> for HttpRequest {
                 })
             }
             _ => Err(anyhow!("The parsing result is not a valid `request`")),
+        }
+    }
+}
+
+impl TryFrom<Pair<'_, Rule>> for HttpUri {
+    type Error = anyhow::Error;
+
+    fn try_from(value: Pair<'_, Rule>) -> Result<Self, Self::Error> {
+        match value.as_rule() {
+            Rule::uri => value.as_str().to_string().try_into(),
+            _ => Err(anyhow!("The parsing result is not a valid `uri`")),
         }
     }
 }

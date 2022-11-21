@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-use crate::data::{HttpHeaders, HttpMethod, HttpVersion};
+use crate::data::{HttpHeaders, HttpMethod, HttpUri, HttpVersion};
 use crate::variables::Placeholder;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct HttpRequest {
-    pub url: String,
+    pub url: HttpUri,
     pub method: HttpMethod,
     pub version: HttpVersion,
     pub headers: HttpHeaders,
