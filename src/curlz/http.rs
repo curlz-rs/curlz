@@ -70,32 +70,41 @@ impl TryFrom<Pair<'_, Rule>> for HttpRequest {
         match request.as_rule() {
             Rule::request => {
                 let mut inner_rules = request.into_inner();
-                let method: HttpMethod = inner_rules
-                    .next()
-                    .unwrap()
-                    .as_str()
-                    .parse::<HttpMethod>()
-                    .unwrap();
+                let method: HttpMethod = inner_rules.next().unwrap().try_into()?;
                 let url = inner_rules.next().unwrap().as_str().to_string();
-                let version: HttpVersion = inner_rules.next().unwrap().try_into().unwrap();
-                let headers = inner_rules.next();
+                let version: HttpVersion = inner_rules.next().unwrap().try_into()?;
+                let headers = inner_rules
+                    .next()
+                    .map(HttpHeaders::try_from)
+                    .unwrap_or_else(|| Ok(HttpHeaders::default()))?;
 
                 dbg!(&method);
                 dbg!(&url);
                 dbg!(&version);
+                dbg!(&headers);
                 // dbg!(body);
 
                 Ok(Self {
                     url,
                     method,
                     version,
-                    // todo get rid of unwrap()
-                    headers: headers.map(HttpHeaders::try_from).unwrap().unwrap(),
+                    headers,
                     curl_params: Default::default(),
                     placeholders: Default::default(),
                 })
             }
             _ => Err(anyhow!("The parsing result is not a valid `request`")),
+        }
+    }
+}
+
+impl TryFrom<Pair<'_, Rule>> for HttpMethod {
+    type Error = anyhow::Error;
+
+    fn try_from(value: Pair<'_, Rule>) -> Result<Self, Self::Error> {
+        match value.as_rule() {
+            Rule::method => value.as_str().parse::<HttpMethod>(),
+            _ => Err(anyhow!("The parsing result is not a valid `method`")),
         }
     }
 }
