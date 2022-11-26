@@ -1,4 +1,4 @@
-use crate::data::{HttpHeaders, HttpMethod, HttpRequest, HttpUri};
+use crate::data::{HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri};
 use crate::interactive;
 use crate::ops::{
     LoadBookmark, MutOperation, Operation, OperationContext, RunCurlCommand, SaveBookmark,
@@ -103,6 +103,7 @@ impl MutOperation for RequestCli {
                     method,
                     version: Http11,
                     headers,
+                    body: HttpBody::default(),
                     placeholders,
                     // todo: implement placeholder scanning..
                     curl_params: raw,
@@ -127,6 +128,7 @@ impl MutOperation for RequestCli {
                     method,
                     version: Http11,
                     headers,
+                    body: HttpBody::default(),
                     placeholders,
                     // todo: implement placeholder scanning..
                     curl_params: raw,

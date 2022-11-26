@@ -1,5 +1,5 @@
 //! a module for experimenting with the http language that the rest client uses
-use crate::data::{Bookmark, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
+use crate::data::{Bookmark, HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
 use anyhow::anyhow;
 use pest::iterators::Pair;
 use pest::Parser;
@@ -13,10 +13,7 @@ fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow
     let mut requests = vec![];
 
     let req_file = req_file.as_ref();
-    let file = HttpParser::parse(Rule::file, req_file)
-        .expect("parsing failed!")
-        .next()
-        .unwrap();
+    let file = HttpParser::parse(Rule::file, req_file)?.next().unwrap();
 
     let mut slug: String = "".to_owned();
     for line in file.into_inner() {
@@ -31,8 +28,9 @@ fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow
                 slug = line.as_str().trim().to_owned();
                 println!("delimiter = {:?}", line.as_str());
             }
+            Rule::EOI => {}
             x => {
-                println!("x = {:?}\n", x);
+                todo!("x = {:?}\n", x);
             }
         }
     }
@@ -77,18 +75,25 @@ impl TryFrom<Pair<'_, Rule>> for HttpRequest {
                     .next()
                     .map(HttpHeaders::try_from)
                     .unwrap_or_else(|| Ok(HttpHeaders::default()))?;
+                let body = inner_rules
+                    .next()
+                    .map(HttpBody::try_from)
+                    // todo: maybe an error on parsing remains an error
+                    .map(|b| b.unwrap_or_default())
+                    .unwrap_or_default();
 
                 dbg!(&method);
                 dbg!(&url);
                 dbg!(&version);
                 dbg!(&headers);
-                // dbg!(body);
+                dbg!(&body);
 
                 Ok(Self {
                     url,
                     method,
                     version,
                     headers,
+                    body,
                     curl_params: Default::default(),
                     placeholders: Default::default(),
                 })
@@ -131,12 +136,23 @@ impl TryFrom<Pair<'_, Rule>> for HttpVersion {
     }
 }
 
+/// converts the body
+impl TryFrom<Pair<'_, Rule>> for HttpBody {
+    type Error = anyhow::Error;
+    fn try_from(value: Pair<'_, Rule>) -> Result<Self, Self::Error> {
+        match value.as_rule() {
+            Rule::body => Ok(HttpBody::InlineText(value.as_str().to_owned())),
+            _ => Err(anyhow!("The parsing result is not a valid `version`")),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::data::HttpVersion::Http11;
     use crate::data::*;
 
-    use crate::data::HttpVersion::Http11;
     use indoc::indoc;
     use pretty_assertions::assert_eq;
     use rstest::rstest;
@@ -155,6 +171,7 @@ mod tests {
                 method: HttpMethod::Get,
                 version: HttpVersion::Http11,
                 headers: HttpHeaders::from(["Accept: application/json".to_owned()].as_slice()),
+                body: HttpBody::default(),
                 curl_params: Default::default(),
                 placeholders: Default::default(),
             }
@@ -172,6 +189,40 @@ mod tests {
                 method: HttpMethod::Get,
                 version: HttpVersion::Http11,
                 headers: Default::default(),
+                body: HttpBody::default(),
+                curl_params: Default::default(),
+                placeholders: Default::default(),
+            }
+        }
+    )]
+    #[case(
+        indoc! {r#"
+            ### this is a POST request with a body
+            POST https://httpbin.org/anything HTTP/1.1
+            Accept: application/json
+            Content-Type: application/json
+
+            {
+                "foo": "Bar",
+                "bool": true
+            }
+        "#},
+        Bookmark {
+            slug: "### this is a POST request with a body".into(),
+            request: HttpRequest {
+                url: "https://httpbin.org/anything".into(),
+                method: HttpMethod::Post,
+                version: HttpVersion::Http11,
+                headers: HttpHeaders::from([
+                    "Accept: application/json".to_owned(),
+                    "Content-Type: application/json".to_owned(),
+                ].as_slice()),
+                body: HttpBody::InlineText(indoc! {r#"
+                    {
+                        "foo": "Bar",
+                        "bool": true
+                    }
+                "#}.to_owned()),
                 curl_params: Default::default(),
                 placeholders: Default::default(),
             }

@@ -8,6 +8,7 @@ request:
   method: GET
   version: HTTP/1.1
   headers: []
+  body: None
   curl_params: []
   placeholders:
   - name: email

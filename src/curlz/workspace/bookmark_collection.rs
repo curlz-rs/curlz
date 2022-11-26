@@ -64,8 +64,8 @@ impl BookmarkCollection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::HttpMethod;
     use crate::data::HttpVersion::Http11;
+    use crate::data::{HttpBody, HttpMethod};
     use crate::data::{HttpHeaders, HttpRequest};
     use crate::ops::SaveBookmark;
     use crate::variables::Placeholder;
@@ -90,6 +90,7 @@ mod tests {
             method: HttpMethod::Get,
             version: Http11,
             headers: HttpHeaders::default(),
+            body: HttpBody::default(),
             curl_params: vec![],
             placeholders: vec![email_placeholder(), protonmail_api_baseurl_placeholder()],
         };

@@ -7,7 +7,7 @@ pub mod utils;
 pub mod variables;
 pub mod workspace;
 
-mod http;
+mod http_file;
 #[cfg(test)]
 pub mod test_utils;
 
