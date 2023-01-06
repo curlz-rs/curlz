@@ -33,7 +33,7 @@ assert_cmd = "2.0"
 predicates = "2.1"
 rstest = "0.15"
 wiremock = "0.5"
-tokio = { version = "1.21", features = ["rt", "macros"], default-features = false }
+tokio = { version = "1.23", features = ["rt", "macros"], default-features = false }
 
 [[bin]]
 name = "curlz"
