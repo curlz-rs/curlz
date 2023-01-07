@@ -1,10 +1,19 @@
-use crate::data::HttpRequest;
+use crate::data::{HttpBody, HttpRequest};
 use crate::ops::{MutOperation, OperationContext, Verbosity};
 use crate::Result;
+use std::ffi::OsStr;
 
 use anyhow::Context;
 use log::debug;
 use std::process::{Command, Stdio};
+
+/// consumes self, and turns it into arguments for a curl [`Command`]
+pub trait IntoCurlArguments<I, S> {
+    fn as_curl_parameter(&self) -> I
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<OsStr>;
+}
 
 #[derive(Debug)]
 pub struct RunCurlCommand<'a> {
@@ -24,13 +33,27 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
         let mut renderer = context.renderer_with_placeholders(&self.request.placeholders);
 
         let url = renderer.render(self.request.url.as_ref(), "url")?;
-        let method: String = (&self.request.method).into();
+        let _method: String = (&self.request.method).into();
 
         let mut cmd = Command::new("curl");
         if context.verbosity.eq(&Verbosity::Silent) {
             cmd.arg("-s");
         }
-        cmd.args(["-X", &method])
+        let payload = if self.request.body.ne(&HttpBody::None) {
+            vec![
+                "--data",
+                match &self.request.body {
+                    HttpBody::InlineText(s) => s.as_str(),
+                    HttpBody::InlineBinary(_) => todo!("inline binary data not impl yet"),
+                    HttpBody::Extern(_) => todo!("external file data loading impl yet"),
+                    HttpBody::None => "",
+                },
+            ]
+        } else {
+            vec![]
+        };
+
+        cmd.args(self.request.method.as_curl_parameter())
             .args(
                 &self
                     .request
@@ -43,7 +66,8 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
                 let value = renderer.render(v, k).unwrap();
                 vec!["-H".to_string(), format!("{}: {}", k, value)]
             }))
-            .arg(&url);
+            .arg(&url)
+            .args(&payload);
 
         debug!("curl cmd: \n  {:?}", &cmd);
 
@@ -52,5 +76,18 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
             .output()
             .map(|_output| ())
             .context("error when starting curl")
+    }
+}
+
+mod curl_arg_conversions {
+    use super::IntoCurlArguments;
+    use crate::data::HttpMethod;
+
+    /// todo: not yet sure if that abstraction is really helpful or stands in the way
+    impl IntoCurlArguments<Vec<String>, String> for HttpMethod {
+        fn as_curl_parameter(&self) -> Vec<String> {
+            let method: String = self.into();
+            vec!["-X".to_string(), method]
+        }
     }
 }

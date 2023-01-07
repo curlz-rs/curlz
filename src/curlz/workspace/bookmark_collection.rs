@@ -64,7 +64,8 @@ impl BookmarkCollection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::HttpMethod;
+    use crate::data::HttpVersion::Http11;
+    use crate::data::{HttpBody, HttpMethod};
     use crate::data::{HttpHeaders, HttpRequest};
     use crate::ops::SaveBookmark;
     use crate::variables::Placeholder;
@@ -85,9 +86,11 @@ mod tests {
     #[test]
     fn should_handle_save_bookmark_command() {
         let request = HttpRequest {
-            url: "{{protonmail_api_baseurl}}/pks/lookup?op=get&search={{email}}".to_owned(),
+            url: "{{protonmail_api_baseurl}}/pks/lookup?op=get&search={{email}}".into(),
             method: HttpMethod::Get,
+            version: Http11,
             headers: HttpHeaders::default(),
+            body: HttpBody::default(),
             curl_params: vec![],
             placeholders: vec![email_placeholder(), protonmail_api_baseurl_placeholder()],
         };

@@ -3,10 +3,10 @@ use serde::{Deserialize, Serialize};
 use crate::data::HttpRequest;
 use crate::ops::SaveBookmark;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Bookmark {
-    slug: String,
-    request: HttpRequest,
+    pub slug: String,
+    pub request: HttpRequest,
 }
 
 impl AsRef<HttpRequest> for Bookmark {

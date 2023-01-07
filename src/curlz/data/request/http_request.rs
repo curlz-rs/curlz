@@ -1,13 +1,15 @@
 use serde::{Deserialize, Serialize};
 
-use crate::data::{HttpHeaders, HttpMethod};
+use crate::data::{HttpBody, HttpHeaders, HttpMethod, HttpUri, HttpVersion};
 use crate::variables::Placeholder;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct HttpRequest {
-    pub url: String,
+    pub url: HttpUri,
     pub method: HttpMethod,
+    pub version: HttpVersion,
     pub headers: HttpHeaders,
+    pub body: HttpBody,
     pub curl_params: Vec<String>,
     pub placeholders: Vec<Placeholder>,
 }

@@ -32,17 +32,25 @@
   - ☑️prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
     `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
 - ☑️evaluate placeholders at the beginning of an url like:
-  ```sh
-  curlz r --define 'host=https://httpbin.org' '{{host}}/get?show_env={{ prompt_for("show_env") }}'
-  ```
+```sh
+curlz r --define 'host=https://httpbin.org' '{{host}}/get?show_env={{ prompt_for("show_env") }}'
+```
 - ☑️special placeholder for developers, like for Json Web Tokens (JWT)
-  - example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
-    ```sh
-    curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
-    ```
+  example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
+```sh
+curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
+```
+- ☑️send a http body via `-d | --data` 
+```sh
+curlz r -d 'Hello World' -X POST 'https://httpbin.org/anything'
+```
+- ☑️send a json payload and headers with the `--json` argument
+```sh
+curlz r --json -d '{ "foo": "bar" }' -X POST 'https://httpbin.org/anything'
+```
 
-## TODOs
-- [ ] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
+## WIP
+- [⏳] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
 
 ## Example #1
 
@@ -60,7 +68,7 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   ```
 - Finally, we can keep using the bookmark from now on: `curlz r gitignore`
 
-## Template functions
+## Template function documentation
 
 ### Json Web Token - `jwt(claims: map, [signing_key: string])`
 - arguments:

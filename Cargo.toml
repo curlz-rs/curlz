@@ -26,14 +26,20 @@ minijinja = "0.25"
 jsonwebtoken = "8.1"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 
+## experimental
+pest = "2.4"
+pest_derive = "2.4"
+
 [dev-dependencies]
-insta = "1.17"
+insta = "1"
 tempfile = "3.3"
 assert_cmd = "2.0"
 predicates = "2.1"
-rstest = "0.15"
+rstest = "0.16"
 wiremock = "0.5"
-tokio = { version = "1.21", features = ["rt", "macros"], default-features = false }
+tokio = { version = "1", features = ["rt", "macros"], default-features = false }
+indoc = "1"
+pretty_assertions = "1"
 
 [[bin]]
 name = "curlz"
