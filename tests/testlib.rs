@@ -7,7 +7,7 @@ use std::process::Command;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, ResponseTemplate};
 
-use curlz::data::HttpMethod;
+use curlz::data::{HttpBody, HttpMethod};
 
 pub fn binary() -> Command {
     Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap()
@@ -17,7 +17,7 @@ pub struct CurlzTestSuite {
     mock_server: MockServer,
     url_part: String,
     http_method: String,
-    payload: String,
+    payload: HttpBody,
 }
 
 impl CurlzTestSuite {
@@ -27,41 +27,62 @@ impl CurlzTestSuite {
             mock_server: MockServer::start().await,
             url_part: "/".to_string(),
             http_method: "GET".to_string(),
-            payload: "# curlz rocks".to_string(),
+            payload: HttpBody::None,
         }
     }
 
     /// sets the target url to be requested
-    pub fn send_to_path(mut self, url_part: &str) -> Self {
+    pub fn with_path(mut self, url_part: &str) -> Self {
         self.url_part = url_part.to_string();
         self
     }
 
     /// sets the http method used for the request
-    pub fn send_with_method(mut self, http_method: HttpMethod) -> Self {
+    pub fn with_method(mut self, http_method: HttpMethod) -> Self {
         self.http_method = (&http_method).into();
         self
     }
 
+    /// sets the http body payload that is send
+    pub fn with_payload(mut self, body: HttpBody) -> Self {
+        self.payload = body;
+
+        self
+    }
+
     /// runs curlz and requests the given url
-    pub async fn issue_request(&mut self) -> Assert {
+    pub async fn send_request(&mut self) -> Assert {
         self.prepare_mock_server().await;
 
         let url = format!("{}{}", &self.mock_server.uri(), self.url_part);
+        // todo: if body is binary, this will not work, better not have expectations for binary payloads
+        let expected_stdout =
+            predicate::str::contains(String::from_utf8_lossy(self.payload.as_bytes().unwrap()));
+        let data = match &self.payload {
+            HttpBody::None => vec![],
+            HttpBody::InlineText(s) => vec!["-d", s.as_str()],
+            _ => todo!(),
+        };
+
         binary()
             .arg("r")
             .args(["-X", self.http_method.as_str()])
+            .args(data)
             .arg(url.as_str())
             .assert()
             .success()
-            .stdout(predicate::str::contains(&self.payload))
+            .stdout(expected_stdout)
             .stderr(predicate::str::contains("% Total"))
     }
 
     async fn prepare_mock_server(&mut self) {
         Mock::given(method(self.http_method.as_str()))
             .and(path(self.url_part.as_str()))
-            .respond_with(ResponseTemplate::new(200).set_body_string(self.payload.as_str()))
+            .respond_with(
+                ResponseTemplate::new(200)
+                    // todo: this should be out commented when `--data` is eventually submitted
+                    .set_body_bytes(self.payload.as_bytes().unwrap()),
+            )
             .mount(&self.mock_server)
             .await;
     }

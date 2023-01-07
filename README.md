@@ -40,6 +40,11 @@
     ```sh
     curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
     ```
+- [ ]: send json payload and json headers with the `--json` argument
+  - example: 
+    ```sh
+    curlz r --json -d '{ "foo": "bar" }' -X POST 'https://httpbin.org/anything'`
+    ```
 
 ## TODOs
 - [ ] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)

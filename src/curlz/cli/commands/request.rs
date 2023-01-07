@@ -32,7 +32,7 @@ pub struct RequestCli {
     pub env_file: PathBuf,
 
     /// Define a adhoc template variable like `--define foo=value --define bar=42`, see also `--env-file` for more convenience
-    #[clap(long, short, number_of_values = 1, value_parser)]
+    #[clap(long, number_of_values = 1, value_parser)]
     pub define: Vec<String>,
 
     #[clap(short = 'X', long = "request", value_parser, default_value = "GET")]
@@ -49,6 +49,13 @@ pub struct RequestCli {
     #[clap(long = "header", short = 'H', value_parser)]
     pub headers: Vec<String>,
 
+    /// set a http body
+    #[clap(short = 'd', long = "data", value_parser)]
+    pub http_payload: Option<String>,
+
+    /// this is a lazy shortcut for setting 2 headers and a http body
+    /// ```sh
+    /// curlz -H "Content-Type: application/json" -H "Accept: application/json"
     #[clap(long = "json", action)]
     pub json: bool,
 
@@ -86,6 +93,8 @@ impl MutOperation for RequestCli {
 
         let method = extract_method(&mut raw)
             .unwrap_or_else(|| HttpMethod::from_str(self.http_method.as_str()))?;
+
+        // headers
         let mut headers: HttpHeaders = self.headers.as_slice().into();
         let (mut raw, headers_args) = extract_headers(&raw);
         let headers_raw: HttpHeaders = headers_args.into();
@@ -94,6 +103,14 @@ impl MutOperation for RequestCli {
             headers.push("Content-Type", "application/json");
             headers.push("Accept", "application/json");
         }
+
+        // body
+        let body = self
+            .http_payload
+            .as_ref()
+            .map(|b| HttpBody::InlineText(b.to_string()))
+            .unwrap_or_default();
+
         let request = if let Some(bookmark_or_url) = self.bookmark_or_url.as_ref() {
             if is_url(bookmark_or_url) {
                 // here we are certain we got an URL
@@ -103,7 +120,7 @@ impl MutOperation for RequestCli {
                     method,
                     version: Http11,
                     headers,
-                    body: HttpBody::default(),
+                    body,
                     placeholders,
                     // todo: implement placeholder scanning..
                     curl_params: raw,
@@ -128,7 +145,7 @@ impl MutOperation for RequestCli {
                     method,
                     version: Http11,
                     headers,
-                    body: HttpBody::default(),
+                    body,
                     placeholders,
                     // todo: implement placeholder scanning..
                     curl_params: raw,
