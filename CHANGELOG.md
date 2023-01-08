@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0-alpha.3](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.3...v0.2.0-alpha.3) (2023-01-08)
+
+
+### Features
+
+* **http-language:** basics of the http language file format ([#14](https://github.com/curlz-rs/curlz/issues/14)) ([5f49b45](https://github.com/curlz-rs/curlz/commit/5f49b4548e624f4a2f555fbb9d83899e74307e22))
+
 ## [Unreleased] - 2022-01-01
 [Unreleased]: https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.1...HEAD
 
