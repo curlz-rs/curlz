@@ -14,3 +14,5 @@ jobs:
           token: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
           # If set, create releases that are pre-major or pre-release version marked as pre-release on Github. Defaults false
           prerelease: true
+          # see https://github.com/googleapis/release-please/blob/main/docs/customizing.md#versioning-strategies
+          version-strategy: always-bump-patch
