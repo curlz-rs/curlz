@@ -11,3 +11,4 @@ jobs:
         with:
           release-type: rust
           default-branch: main
+          token: $${ secrets.GH_PAT }}
