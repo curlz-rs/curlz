@@ -11,5 +11,4 @@ jobs:
         with:
           release-type: rust
           default-branch: main
-          token: $${ secrets.GH_PAT_RELEASE_PLEASE }}
-          debug: true
+          token: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
