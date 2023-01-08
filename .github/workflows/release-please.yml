@@ -12,3 +12,5 @@ jobs:
           release-type: rust
           default-branch: main
           token: ${{ secrets.GH_PAT_RELEASE_PLEASE }}
+          # If set, create releases that are pre-major or pre-release version marked as pre-release on Github. Defaults false
+          prerelease: true
