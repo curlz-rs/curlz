@@ -5,7 +5,7 @@ use assert_cmd::assert::Assert;
 use dotenvy::dotenv;
 use std::process::Command;
 use wiremock::matchers::{method, path};
-use wiremock::{Mock, MockServer, ResponseTemplate};
+use wiremock::{Mock, MockServer, Request, Respond, ResponseTemplate};
 
 use curlz::data::{HttpBody, HttpMethod};
 
@@ -46,11 +46,10 @@ impl CurlzTestSuite {
     /// sets the http body payload that is send
     pub fn with_payload(mut self, body: HttpBody) -> Self {
         self.payload = body;
-
         self
     }
 
-    /// runs curlz and requests the given url
+    /// runs curlz and requests the given url from a local echo http server
     pub async fn send_request(&mut self) -> Assert {
         self.prepare_mock_server().await;
 
@@ -78,12 +77,17 @@ impl CurlzTestSuite {
     async fn prepare_mock_server(&mut self) {
         Mock::given(method(self.http_method.as_str()))
             .and(path(self.url_part.as_str()))
-            .respond_with(
-                ResponseTemplate::new(200)
-                    // todo: this should be out commented when `--data` is eventually submitted
-                    .set_body_bytes(self.payload.as_bytes().unwrap()),
-            )
+            .respond_with(EchoResponder::default())
             .mount(&self.mock_server)
             .await;
+    }
+}
+
+#[derive(Default)]
+struct EchoResponder;
+
+impl Respond for EchoResponder {
+    fn respond(&self, request: &Request) -> ResponseTemplate {
+        ResponseTemplate::new(200).set_body_bytes(request.body.as_slice())
     }
 }

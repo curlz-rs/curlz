@@ -27,7 +27,7 @@ async fn should_send_as_get() {
 async fn should_send_as_post() {
     CurlzTestSuite::new()
         .await
-        .with_path("/anything")
+        .with_path("/post")
         .with_method(HttpMethod::Post)
         .send_request()
         .await;
@@ -37,7 +37,7 @@ async fn should_send_as_post() {
 async fn should_send_text_as_put() {
     CurlzTestSuite::new()
         .await
-        .with_path("/anything")
+        .with_path("/put")
         .with_method(HttpMethod::Put)
         .with_payload(HttpBody::InlineText("Howdy Pal!".to_string()))
         .send_request()
