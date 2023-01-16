@@ -29,7 +29,7 @@ impl<'a> RunCurlCommand<'a> {
 impl<'a> MutOperation for RunCurlCommand<'a> {
     type Output = ();
 
-    fn execute(&self, context: &mut OperationContext) -> crate::Result<Self::Output> {
+    fn execute(&self, context: &mut OperationContext) -> Result<Self::Output> {
         let mut renderer = context.renderer_with_placeholders(&self.request.placeholders);
 
         let url = renderer.render(self.request.url.as_ref(), "url")?;
@@ -41,12 +41,12 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
         }
         let payload = if self.request.body.ne(&HttpBody::None) {
             vec![
-                "--data",
+                "--data".to_string(),
                 match &self.request.body {
-                    HttpBody::InlineText(s) => s.as_str(),
+                    HttpBody::InlineText(s) => renderer.render(s.as_str(), "body")?,
                     HttpBody::InlineBinary(_) => todo!("inline binary data not impl yet"),
                     HttpBody::Extern(_) => todo!("external file data loading impl yet"),
-                    HttpBody::None => "",
+                    HttpBody::None => "".to_string(),
                 },
             ]
         } else {

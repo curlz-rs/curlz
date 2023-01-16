@@ -56,8 +56,8 @@ pub struct RequestCli {
     /// this is a lazy shortcut for setting 2 headers and a http body
     /// ```sh
     /// curlz -H "Content-Type: application/json" -H "Accept: application/json"
-    #[clap(long = "json", action)]
-    pub json: bool,
+    #[clap(long = "json", value_parser)]
+    pub json: Option<String>,
 
     #[clap(value_parser)]
     pub bookmark_or_url: Option<String>,
@@ -99,7 +99,7 @@ impl MutOperation for RequestCli {
         let (mut raw, headers_args) = extract_headers(&raw);
         let headers_raw: HttpHeaders = headers_args.into();
         headers.merge(&headers_raw);
-        if self.json {
+        if self.json.is_some() {
             headers.push("Content-Type", "application/json");
             headers.push("Accept", "application/json");
         }
@@ -109,6 +109,7 @@ impl MutOperation for RequestCli {
             .http_payload
             .as_ref()
             .map(|b| HttpBody::InlineText(b.to_string()))
+            .or_else(|| self.json.clone().map(HttpBody::InlineText))
             .unwrap_or_default();
 
         let request = if let Some(bookmark_or_url) = self.bookmark_or_url.as_ref() {

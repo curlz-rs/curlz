@@ -43,3 +43,9 @@ impl HttpBody {
         })
     }
 }
+
+impl From<&str> for HttpBody {
+    fn from(value: &str) -> Self {
+        Self::InlineText(value.to_string())
+    }
+}
