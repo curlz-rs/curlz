@@ -13,41 +13,30 @@
  
 ## Features
 
-- ☑️.env files
-- ☑️.yaml env files
-- ☑️placeholder evaluation, with the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine
+- variables from `.env` and `.yaml` environment files
+- ️placeholder evaluation, with the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine
   - in urls
   - in http headers (`-H | --header` arguments)
+  - in the http body (`-d | --data` argument)
   - in every other passed curl parameter
-- ☑️save request as a bookmark, containing
-  - curl arguments
-  - http headers
-  - http method
-  - placeholders
-- ☑️pass all arguments after `--` to curl, that makes drop-in-replacement possible
-- ☑️execute a bookmarked request
-- ☑️special placeholder variables that would interact with the user
-  - ☑️prompt for a password as `{{ prompt_password() }}` 
-    `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
-  - ☑️prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
-    `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
-- ☑️evaluate placeholders at the beginning of an url like:
-```sh
-curlz r --define 'host=https://httpbin.org' '{{host}}/get?show_env={{ prompt_for("show_env") }}'
-```
-- ☑️special placeholder for developers, like for Json Web Tokens (JWT)
-  example: `{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
-```sh
-curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv
-```
-- ☑️send a http body via `-d | --data` 
-```sh
-curlz r -d 'Hello World' -X POST 'https://httpbin.org/anything'
-```
-- ☑️send a json payload and headers with the `--json` argument
-```sh
-curlz r --json -d '{ "foo": "bar" }' -X POST 'https://httpbin.org/anything'
-```
+- save request as a bookmark, containing
+  - curl arguments, http headers, http method and placeholders
+- support any curl argument after a `--`, that makes a drop-in-replacemen for curl
+- execute a bookmarked request
+- special placeholders that would interact with the user
+  - prompt for a password as `{{ prompt_password() }}` 
+  `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
+  - prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
+  `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
+- ️evaluate placeholders at the beginning of an url like:
+`curlz r --define 'host=https://httpbin.org' '{{host}}/get'`
+- ️special placeholder for developers, like for Json Web Tokens (JWT)
+`{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
+`curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv`
+- send a http body via `-d | --data` 
+`curlz r -d 'Hello World' -X POST https://httpbin.org/anything`
+- send a json payload and headers with the `--json` argument
+`curlz r --json '{ "foo": "bar" }' -X POST 'https://httpbin.org/anything'`
 
 ## WIP
 - [⏳] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
