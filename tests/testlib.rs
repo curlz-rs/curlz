@@ -24,8 +24,8 @@ pub struct CurlzTestSuite {
     expected_stdout: BoxPredicate<str>,
 }
 
-impl CurlzTestSuite {
-    pub fn new() -> Self {
+impl Default for CurlzTestSuite {
+    fn default() -> Self {
         dotenv().ok();
         Self {
             url_part: "/".to_string(),
@@ -34,6 +34,12 @@ impl CurlzTestSuite {
             defined_variables: Default::default(),
             expected_stdout: BoxPredicate::new(contains("")),
         }
+    }
+}
+
+impl CurlzTestSuite {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     /// runs curlz and requests the given url from a local echo http server
