@@ -14,16 +14,10 @@
 ## Features
 
 - variables from `.env` and `.yaml` environment files
-- ️placeholder evaluation, with the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine
-  - in urls
-  - in http headers (`-H | --header` arguments)
-  - in the http body (`-d | --data` argument)
-  - in every other passed curl parameter
-- save request as a bookmark, containing
-  - curl arguments, http headers, http method and placeholders
-- support any curl argument after a `--`, that makes a drop-in-replacemen for curl
-- execute a bookmarked request
-- special placeholders that would interact with the user
+- ️placeholder evaluation using the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine, which can be used in URLs, HTTP headers, the HTTP body, and other passed curl parameters
+- ability to save and execute requests as bookmarks with a shortname
+- support any curl argument after a `--`, that makes a drop-in-replacement for curl
+- special placeholders to interact with the user
   - prompt for a password as `{{ prompt_password() }}` 
   `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
   - prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
