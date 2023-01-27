@@ -25,6 +25,10 @@ minijinja = "0.29"
 
 jsonwebtoken = "8.1"
 serde_json = { version = "1.0", features = ["preserve_order"] }
+toml = "0.6"
+
+## custom parser experiemnt
+unicode-ident = "1.0"
 
 ## experimental
 pest = "2.4"

@@ -44,7 +44,7 @@ impl<'source> RenderBuilder<'source> {
 
     /// it renders a given template
     pub fn render(mut self, template: &'source str) -> String {
-        let name = "something";
+        let name = "render-builder-template";
         self.env.add_template(name, template).unwrap();
         let template = self.env.get_template(name).unwrap();
 

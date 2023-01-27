@@ -1,0 +1,55 @@
+---
+source: src/curlz/language/parser.rs
+expression: p.parse()
+---
+Ok(
+    Template(
+        Spanned {
+            node: Template {
+                children: [
+                    EmitRaw(
+                        Spanned {
+                            node: EmitRaw {
+                                raw: "hello ",
+                            },
+                            span:  @ 1:0-1:6,
+                        },
+                    ),
+                    EmitExpr(
+                        Spanned {
+                            node: EmitExpr {
+                                expr: Call(
+                                    Spanned {
+                                        node: Call {
+                                            expr: SysVar(
+                                                Spanned {
+                                                    node: SysVar {
+                                                        id: "processEnv",
+                                                    },
+                                                    span:  @ 1:9-1:20,
+                                                },
+                                            ),
+                                            args: [
+                                                Var(
+                                                    Spanned {
+                                                        node: Var {
+                                                            id: "HOME",
+                                                        },
+                                                        span:  @ 1:21-1:25,
+                                                    },
+                                                ),
+                                            ],
+                                        },
+                                        span:  @ 1:9-1:20,
+                                    },
+                                ),
+                            },
+                            span:  @ 1:6-0:0,
+                        },
+                    ),
+                ],
+            },
+            span:  @ 0:0-0:0,
+        },
+    ),
+)
