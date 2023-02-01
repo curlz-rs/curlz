@@ -68,3 +68,24 @@ pub enum Stmt<'a> {
     EmitRaw(Spanned<EmitRaw<'a>>),
     EmitExpr(Spanned<EmitExpr<'a>>),
 }
+
+#[cfg(test)]
+pub trait IntoSpanned {
+    fn spanned(self) -> Spanned<Self>
+    where
+        Self: Sized,
+    {
+        Spanned::new(
+            self,
+            Span {
+                start_line: 1,
+                start_col: 0,
+                end_line: 1,
+                end_col: 1,
+            },
+        )
+    }
+}
+
+#[cfg(test)]
+impl<T> IntoSpanned for T {}
