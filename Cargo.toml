@@ -25,7 +25,7 @@ minijinja = "0.29"
 
 jsonwebtoken = "8.1"
 serde_json = { version = "1.0", features = ["preserve_order"] }
-toml = "0.6"
+toml = { version = "0.6", optional = true }
 
 ## custom parser experiemnt
 unicode-ident = "1.0"
@@ -44,6 +44,9 @@ wiremock = "0.5"
 tokio = { version = "1", features = ["rt", "macros"], default-features = false }
 indoc = "1"
 pretty_assertions = "1"
+
+[features]
+"x-custom-template-language" = ["dep:toml"]
 
 [[bin]]
 name = "curlz"

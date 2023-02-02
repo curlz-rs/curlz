@@ -66,7 +66,7 @@ impl<'s> TokenizerState<'s> {
         if ident_len > 0 {
             let old_loc = self.loc();
             let ident = self.advance(ident_len);
-            let token = if let Some(b'$') = ident.as_bytes().get(0) {
+            let token = if let Some(b'$') = ident.as_bytes().first() {
                 Token::SysVarIdent(&ident[1..])
             } else {
                 Token::VarIdent(ident)

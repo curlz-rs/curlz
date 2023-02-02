@@ -53,7 +53,7 @@ impl<'source> AstVisit<'source> for Runtime<'source> {
         use ast::Expr::*;
 
         match expr {
-            SysVar(var) => todo!(),
+            SysVar(_var) => todo!(),
             Var(var) => {
                 if let Some(var) = self.vars.get(var.node.id) {
                     self.output

@@ -70,10 +70,10 @@ impl<'a> Parser<'a> {
     fn ensure_next_token(&mut self, expected_token: Token) {
         if let Some(Ok((token, span))) = self.tokens.next() {
             if token != expected_token {
-                panic!("{} was not found at {:?}", expected_token, span);
+                panic!("{expected_token} was not found at {span:?}");
             }
         } else {
-            panic!("{} was not found at {:?}", expected_token, self.last_span);
+            panic!("{expected_token} was not found at {:?}", self.last_span);
         }
     }
 
