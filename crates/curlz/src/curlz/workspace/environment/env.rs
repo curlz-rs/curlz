@@ -91,8 +91,8 @@ mod tests {
     #[test]
     fn should_load_a_dot_env_file() {
         let tmp = TempDir::new().unwrap();
-        create_file(&tmp, ".env", "").unwrap();
-        Environment::try_from(tmp.path().join(".env").as_path()).unwrap();
+        create_file(&tmp, "../../../../../../.env", "").unwrap();
+        Environment::try_from(tmp.path().join("../../../../../../.env").as_path()).unwrap();
     }
 
     #[test]

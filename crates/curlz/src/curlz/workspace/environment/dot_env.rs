@@ -40,13 +40,13 @@ mod tests {
         let tmp = TempDir::new().unwrap();
         create_file(
             &tmp,
-            ".env",
+            "../../../../../../.env",
             r#"protonmail_api_baseurl=https://api.protonmail.ch
 email=some@user.com
 "#,
         )
         .unwrap();
-        let dot_file = DotEnvFile(tmp.path().join(".env"));
+        let dot_file = DotEnvFile(tmp.path().join("../../../../../../.env"));
 
         let env = Environment::try_from(dot_file).unwrap();
         assert_eq!(

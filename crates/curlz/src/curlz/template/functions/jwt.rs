@@ -1,7 +1,6 @@
 use chrono::{Duration, Timelike, Utc};
 use jsonwebtoken::{EncodingKey, Header};
-use minijinja::value::Value;
-use minijinja::{Error, ErrorKind, State};
+use minijinja::{value::Value, Error, ErrorKind, State};
 use std::collections::HashMap;
 use std::ops::{Add, Not};
 

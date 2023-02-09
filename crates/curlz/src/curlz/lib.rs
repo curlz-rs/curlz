@@ -7,10 +7,6 @@ pub mod utils;
 pub mod variables;
 pub mod workspace;
 
-#[allow(dead_code)]
-#[cfg(feature = "x-custom-template-language")]
-mod language;
-
 mod http_file;
 #[cfg(test)]
 pub mod test_utils;
