@@ -31,7 +31,7 @@ pest = "2.4"
 pest_derive = "2.4"
 
 # workspace deps
-curlz-templ-lang = { path = "../templ-lang", optional = true }
+curlz-templ-lang = { version = "0.1.0", path = "../templ-lang", optional = true }
 
 [features]
 "x-custom-template-language" = ["dep:curlz-templ-lang"]
