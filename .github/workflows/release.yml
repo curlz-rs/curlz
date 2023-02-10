@@ -1,4 +1,4 @@
-name: Deploy
+name: Release
 on:
   push:
     tags: 
@@ -28,9 +28,7 @@ jobs:
           default: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - uses: katyo/publish-crates@v1
-        with:
-          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - run: cargo publish -p curlz
 
   # https://github.com/mislav/bump-homebrew-formula-action
 #  publish-to-brew:
