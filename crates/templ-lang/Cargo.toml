@@ -9,5 +9,5 @@ toml = "0.7"
 unicode-ident = "1.0"
 
 [dev-dependencies]
-indoc = "1"
+indoc = "2"
 insta = "1"
