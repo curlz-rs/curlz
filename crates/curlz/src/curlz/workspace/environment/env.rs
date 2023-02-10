@@ -86,19 +86,16 @@ impl From<&mut Environment> for Object {
 mod tests {
     use super::*;
     use crate::workspace::tests::create_file;
-    use tempfile::TempDir;
 
     #[test]
     fn should_load_a_dot_env_file() {
-        let tmp = TempDir::new().unwrap();
-        create_file(&tmp, "../../../../../../.env", "").unwrap();
-        Environment::try_from(tmp.path().join("../../../../../../.env").as_path()).unwrap();
+        let tmp = create_file(".env", "").unwrap();
+        Environment::try_from(tmp.path().join(".env").as_path()).unwrap();
     }
 
     #[test]
     fn should_load_a_yaml_env_file() {
-        let tmp = TempDir::new().unwrap();
-        create_file(&tmp, "staging.yml", "").unwrap();
+        let tmp = create_file("staging.yml", "").unwrap();
         Environment::try_from(tmp.path().join(".staging.yml").as_path()).unwrap();
     }
 
@@ -110,16 +107,14 @@ mod tests {
     #[test]
     #[should_panic(expected = "not yet implemented: Environment loading for file extension json")]
     fn should_not_load_a_json_env_file() {
-        let tmp = TempDir::new().unwrap();
-        create_file(&tmp, "staging.json", "").unwrap();
+        let tmp = create_file("staging.json", "").unwrap();
         Environment::try_from(tmp.path().join("staging.json").as_path()).unwrap();
     }
 
     #[test]
     #[should_panic(expected = "not yet implemented: Support directory environments")]
     fn should_not_load_a_env_directory() {
-        let tmp = TempDir::new().unwrap();
-        create_file(&tmp, "env/staging.yml", "").unwrap();
+        let tmp = create_file("env/staging.yml", "").unwrap();
         Environment::try_from(tmp.path().join("env").as_path()).unwrap();
     }
 }

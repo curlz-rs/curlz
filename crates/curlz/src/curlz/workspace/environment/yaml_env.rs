@@ -28,17 +28,16 @@ impl TryFrom<YamlEnvFile> for Environment {
 mod tests {
     use super::*;
     use crate::workspace::tests::create_file;
-    use tempfile::TempDir;
+    use indoc::indoc;
 
     #[test]
     fn should_try_from_yaml_env_file() {
-        let tmp = TempDir::new().unwrap();
-        create_file(
-            &tmp,
+        let tmp = create_file(
             ".staging.yml",
-            r#"protonmail_api_baseurl: https://api.protonmail.ch
-email: some@user.com
-"#,
+            indoc! { r#"
+                protonmail_api_baseurl: https://api.protonmail.ch
+                email: some@user.com
+            "#},
         )
         .unwrap();
         let dot_file = YamlEnvFile(tmp.path().join(".staging.yml"));

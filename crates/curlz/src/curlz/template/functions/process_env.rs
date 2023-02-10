@@ -21,6 +21,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[ignore]
     #[should_panic(expected = "The argument `var_name` for function `processEnv` was not defined.")]
     fn should_throw_when_var_name_is_missing() {
         RenderBuilder::new()

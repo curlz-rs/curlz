@@ -32,21 +32,19 @@ impl TryFrom<DotEnvFile> for Environment {
 mod tests {
     use super::*;
     use crate::workspace::tests::create_file;
-
-    use tempfile::TempDir;
+    use indoc::indoc;
 
     #[test]
     fn should_try_from_dot_env_file() {
-        let tmp = TempDir::new().unwrap();
-        create_file(
-            &tmp,
-            "../../../../../../.env",
-            r#"protonmail_api_baseurl=https://api.protonmail.ch
-email=some@user.com
-"#,
+        let tmp = create_file(
+            ".env",
+            indoc! { r#"
+                protonmail_api_baseurl=https://api.protonmail.ch
+                email=some@user.com
+            "#},
         )
         .unwrap();
-        let dot_file = DotEnvFile(tmp.path().join("../../../../../../.env"));
+        let dot_file = DotEnvFile(tmp.path().join(".env"));
 
         let env = Environment::try_from(dot_file).unwrap();
         assert_eq!(
