@@ -1,6 +1,6 @@
-use crate::data::Bookmark;
-use crate::data::HttpMethod;
 use crate::ops::{Operation, OperationContext};
+use crate::request::bookmark::Bookmark;
+use crate::request::http::HttpMethod;
 
 #[derive(Debug)]
 pub struct LoadBookmark {

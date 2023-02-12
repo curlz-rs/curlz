@@ -4,7 +4,8 @@ use filenamify::filenamify;
 use std::path::PathBuf;
 use std::{env, fs};
 
-use crate::data::{Bookmark, HttpMethod};
+use crate::request::bookmark::Bookmark;
+use crate::request::http::HttpMethod;
 use crate::Result;
 
 const WORKSPACE_FOLDER: &str = ".curlz";
@@ -64,10 +65,10 @@ impl BookmarkCollection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::HttpVersion::Http11;
-    use crate::data::{HttpBody, HttpMethod};
-    use crate::data::{HttpHeaders, HttpRequest};
-    use crate::ops::SaveBookmark;
+    use crate::request::bookmark::SaveBookmark;
+    use crate::request::http::HttpVersion::Http11;
+    use crate::request::http::{HttpBody, HttpMethod};
+    use crate::request::http::{HttpHeaders, HttpRequest};
     use crate::variables::Placeholder;
     use tempfile::{tempdir, TempDir};
 

@@ -1,5 +1,5 @@
 use assert_cmd::prelude::*;
-use curlz::data::{HttpBody, HttpMethod};
+use curlz::request::http::{HttpBody, HttpMethod};
 use predicates::prelude::*;
 use predicates::str::contains;
 

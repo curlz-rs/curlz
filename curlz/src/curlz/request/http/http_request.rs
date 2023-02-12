@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::data::{HttpBody, HttpHeaders, HttpMethod, HttpUri, HttpVersion};
+use crate::request::http::{HttpBody, HttpHeaders, HttpMethod, HttpUri, HttpVersion};
 use crate::variables::Placeholder;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]

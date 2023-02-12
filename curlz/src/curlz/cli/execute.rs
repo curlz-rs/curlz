@@ -1,4 +1,4 @@
-use super::commands::*;
+use super::sub_commands::*;
 
 use crate::ops::{MutOperation, OperationContext};
 use crate::variables::Placeholder;
@@ -16,7 +16,7 @@ pub struct Cli {
     #[clap(flatten)]
     verbose: Verbosity<InfoLevel>,
     #[clap(subcommand)]
-    pub command: Commands,
+    pub command: SubCommands,
 }
 
 pub fn execute() -> crate::Result<()> {
@@ -25,6 +25,8 @@ pub fn execute() -> crate::Result<()> {
         .filter_level(args.verbose.log_level_filter())
         .target(Target::Stderr)
         .init();
+
+    // let verbosity = args.verbose.map("".
     let verbosity = if args.verbose.is_silent() {
         crate::ops::Verbosity::Silent
     } else {
@@ -32,7 +34,7 @@ pub fn execute() -> crate::Result<()> {
     };
 
     match args.command {
-        Commands::Request(r) => {
+        SubCommands::Request(r) => {
             let r = &r;
             let placeholders = r.parse_define_as_placeholders();
             let env = create_environment(&r.env_file, &placeholders)?;
@@ -40,7 +42,7 @@ pub fn execute() -> crate::Result<()> {
 
             r.execute(&mut ctx)
         }
-        Commands::Bookmark(_b) => {
+        SubCommands::Bookmark(_b) => {
             todo!()
         }
     }

@@ -1,5 +1,6 @@
 //! a module for experimenting with the http language that the rest client uses
-use crate::data::{Bookmark, HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
+use crate::request::bookmark::Bookmark;
+use crate::request::http::{HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
 
 use anyhow::anyhow;
 use pest::iterators::Pair;
@@ -151,8 +152,8 @@ impl TryFrom<Pair<'_, Rule>> for HttpBody {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::data::HttpVersion::Http11;
-    use crate::data::*;
+    use crate::request::http::HttpVersion::Http11;
+    use crate::request::http::*;
 
     use indoc::indoc;
     use pretty_assertions::assert_eq;

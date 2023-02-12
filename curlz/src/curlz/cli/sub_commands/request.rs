@@ -1,13 +1,13 @@
-use crate::data::{HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri};
+use crate::cli::HeaderArgs;
 use crate::interactive;
-use crate::ops::{
-    LoadBookmark, MutOperation, Operation, OperationContext, RunCurlCommand, SaveBookmark,
+use crate::ops::{MutOperation, Operation, OperationContext, RunCurlCommand};
+use crate::request::http::{
+    HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion::Http11,
 };
 use crate::utils::parse_pairs;
 use crate::variables::Placeholder;
 
-use crate::cli::HeaderArgs;
-use crate::data::HttpVersion::Http11;
+use crate::request::bookmark::{LoadBookmark, SaveBookmark};
 use anyhow::Context;
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};

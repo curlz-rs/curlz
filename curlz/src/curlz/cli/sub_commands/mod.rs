@@ -7,7 +7,7 @@ pub use bookmark::*;
 pub use request::*;
 
 #[derive(Clone, Debug, Subcommand)]
-pub enum Commands {
+pub enum SubCommands {
     #[clap(alias("r"))]
     Request(RequestCli),
     #[clap(alias("b"))]

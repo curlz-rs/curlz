@@ -1,7 +1,12 @@
-use serde::{Deserialize, Serialize};
+mod load_bookmark;
+mod save_bookmark;
 
-use crate::data::HttpRequest;
-use crate::ops::SaveBookmark;
+pub use self::load_bookmark::LoadBookmark;
+pub use self::save_bookmark::SaveBookmark;
+
+use crate::request::http::HttpRequest;
+
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Bookmark {

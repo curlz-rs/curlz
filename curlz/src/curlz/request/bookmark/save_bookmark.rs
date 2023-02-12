@@ -1,7 +1,5 @@
-use crate::data::HttpRequest;
-use crate::ops::Operation;
-
-use super::OperationContext;
+use crate::ops::{Operation, OperationContext};
+use crate::request::http::HttpRequest;
 
 #[derive(Debug)]
 pub struct SaveBookmark<'a> {

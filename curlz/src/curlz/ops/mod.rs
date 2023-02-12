@@ -1,15 +1,11 @@
-pub use load_bookmark::*;
 pub use run_curl::*;
-pub use save_bookmark::*;
 
 use crate::template::Renderer;
 use crate::variables::Placeholder;
 use crate::workspace::{BookmarkCollection, Environment};
 use crate::Result;
 
-mod load_bookmark;
 mod run_curl;
-mod save_bookmark;
 
 #[derive(Ord, PartialOrd, Eq, PartialEq)]
 pub enum Verbosity {
