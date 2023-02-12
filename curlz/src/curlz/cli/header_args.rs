@@ -1,3 +1,5 @@
+use crate::data::HttpHeaders;
+
 pub struct HeaderArgs(Vec<String>);
 
 impl AsRef<[String]> for HeaderArgs {
@@ -23,6 +25,12 @@ impl From<&Vec<String>> for HeaderArgs {
         }
 
         HeaderArgs(headers)
+    }
+}
+
+impl From<HeaderArgs> for HttpHeaders {
+    fn from(raw_headers: HeaderArgs) -> Self {
+        raw_headers.as_ref().into()
     }
 }
 

@@ -1,11 +1,12 @@
 //! a module for experimenting with the http language that the rest client uses
 use crate::data::{Bookmark, HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
+
 use anyhow::anyhow;
 use pest::iterators::Pair;
 use pest::Parser;
 
 #[derive(Parser)]
-#[grammar = "parser/http-grammar.pest"] // relative to project `src`
+#[grammar = "curlz/parser/http-grammar.pest"] // relative to project `src`
 struct HttpParser;
 
 #[allow(dead_code)]

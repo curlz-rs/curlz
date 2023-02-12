@@ -1,4 +1,3 @@
-use crate::cli::HeaderArgs;
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -29,12 +28,6 @@ impl AsRef<[(String, String)]> for HttpHeaders {
     }
 }
 
-impl From<HeaderArgs> for HttpHeaders {
-    fn from(raw_headers: HeaderArgs) -> Self {
-        raw_headers.as_ref().into()
-    }
-}
-
 impl From<&[String]> for HttpHeaders {
     fn from(headers: &[String]) -> Self {
         Self(
@@ -52,6 +45,7 @@ impl From<&[String]> for HttpHeaders {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cli::HeaderArgs;
 
     #[test]
     fn should_parse_the_header_arg_flag_away() {
@@ -69,6 +63,7 @@ mod tests {
         .collect::<Vec<String>>();
 
         let headers: HeaderArgs = (&args).into();
+        // let headers: HttpHeaders = (&*args).into();
         let headers: HttpHeaders = headers.into();
 
         assert_eq!(

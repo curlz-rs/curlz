@@ -1,22 +1,34 @@
-use crate::cli::{Cli, Commands};
-use crate::ops::{MutOperation, OperationContext, Verbosity};
+use super::commands::*;
+
+use crate::ops::{MutOperation, OperationContext};
 use crate::variables::Placeholder;
 use crate::workspace::Environment;
-
 use clap::Parser;
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 use env_logger::Target;
 use std::path::Path;
 
-pub fn exec() -> crate::Result<()> {
+#[derive(Clone, Debug, Parser)]
+#[clap(author, version, about, long_about = None, arg_required_else_help(true))]
+#[clap(propagate_version = true)]
+#[clap(name = "curlz")]
+pub struct Cli {
+    #[clap(flatten)]
+    verbose: Verbosity<InfoLevel>,
+    #[clap(subcommand)]
+    pub command: Commands,
+}
+
+pub fn execute() -> crate::Result<()> {
     let args = Cli::parse();
     env_logger::Builder::new()
         .filter_level(args.verbose.log_level_filter())
         .target(Target::Stderr)
         .init();
     let verbosity = if args.verbose.is_silent() {
-        Verbosity::Silent
+        crate::ops::Verbosity::Silent
     } else {
-        Verbosity::Verbose
+        crate::ops::Verbosity::Verbose
     };
 
     match args.command {
