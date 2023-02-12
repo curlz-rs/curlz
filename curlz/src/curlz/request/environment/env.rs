@@ -85,7 +85,7 @@ impl From<&mut Environment> for Object {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::workspace::tests::create_file;
+    use crate::test_utils::create_file;
 
     #[test]
     fn should_load_a_dot_env_file() {

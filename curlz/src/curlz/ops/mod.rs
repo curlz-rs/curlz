@@ -28,7 +28,7 @@ pub trait MutOperation {
 
 /// processes all commands and keeps the application state
 pub struct OperationContext {
-    verbosity: Verbosity,
+    pub verbosity: Verbosity,
     bookmark_collection: BookmarkCollection,
     environment: Environment,
 }

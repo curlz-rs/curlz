@@ -27,7 +27,7 @@ impl TryFrom<YamlEnvFile> for Environment {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::workspace::tests::create_file;
+    use crate::test_utils::create_file;
     use indoc::indoc;
 
     #[test]
