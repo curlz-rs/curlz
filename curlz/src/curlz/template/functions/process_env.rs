@@ -30,12 +30,24 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(not(windows))]
     fn should_throw_when_var_name_is_missing() {
         assert_eq!(
             RenderBuilder::new()
                 .with_function("processEnv", process_env)
                 .render(r#"{{ processEnv("USER") }}"#),
             std::env::var("USER").unwrap()
+        );
+    }
+
+    #[test]
+    #[cfg(windows)]
+    fn should_throw_when_var_name_is_missing() {
+        assert_eq!(
+            RenderBuilder::new()
+                .with_function("processEnv", process_env)
+                .render(r#"{{ processEnv("USERNAME") }}"#),
+            std::env::var("USERNAME").unwrap()
         );
     }
 
@@ -47,12 +59,22 @@ mod tests {
             println!("{key}: {value}");
             hm.insert(key, value);
         }
+        #[cfg(not(windows))]
         assert!(hm.contains_key("USER"));
+        #[cfg(windows)]
+        assert!(hm.contains_key("USERNAME"));
+
         let b = RenderBuilder::new().with_env_var("env", hm);
 
+        #[cfg(not(windows))]
         assert_eq!(
             b.render(r#"{{ env.USER }}"#),
             std::env::var("USER").unwrap()
+        );
+        #[cfg(windows)]
+        assert_eq!(
+            b.render(r#"{{ env.USERNAME }}"#),
+            std::env::var("USERNAME").unwrap()
         );
     }
 }
