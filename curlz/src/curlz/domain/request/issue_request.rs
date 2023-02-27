@@ -31,7 +31,7 @@ pub fn issue_request(
     backend.issue(&req, &ctx)
 }
 
-/// issues a request with the via curl (see [`InvokeCurlBackend`])
+/// issues a request with the via curl
 pub fn issue_request_with_curl(req: IssueRequest<'_>, env: &Environment) -> crate::Result<()> {
     let backend = InvokeCurlBackend::default();
 
