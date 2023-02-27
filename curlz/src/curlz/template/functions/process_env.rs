@@ -1,29 +1,34 @@
-use minijinja::value::Value;
-use minijinja::{Error, ErrorKind, State};
-use std::env::VarError;
+use minijinja::value::{StructObject, Value};
+use minijinja::{Error, State};
 
-pub fn process_env(_state: &State, var_name: &Value) -> Result<String, Error> {
-    let var_name = var_name.as_str().ok_or_else(|| {
-        Error::new(
-            ErrorKind::MissingArgument,
-            "The argument `var_name` for function `processEnv(var_name)` is missing.",
-        )
-    })?;
+pub struct ProcessEnv;
+impl StructObject for ProcessEnv {
+    fn get_field(&self, field: &str) -> Option<Value> {
+        // std::env::var(var_name)
+        //     .map(|v| Value::from_safe_string(v))
+        //     .map_err(|e| match e {
+        //         VarError::NotPresent => Error::new(
+        //             ErrorKind::NonKey,
+        //             format!("The process env variable `{var_name}` is not defined."),
+        //         ),
+        //         VarError::NotUnicode(_) => Error::new(
+        //             ErrorKind::UndefinedError,
+        //             format!("The process env variable `{var_name}` has an invalid unicode value."),
+        //         ),
+        //     })
+        std::env::var(field).map(Value::from_safe_string).ok()
+    }
+}
 
-    std::env::var(var_name).map_err(|e| match e {
-        VarError::NotPresent => Error::new(
-            ErrorKind::NonKey,
-            format!("The process env variable `{var_name}` is not defined."),
-        ),
-        VarError::NotUnicode(_) => Error::new(
-            ErrorKind::UndefinedError,
-            format!("The process env variable `{var_name}` has an invalid unicode value."),
-        ),
-    })
+/// function for minijinja
+pub fn process_env(_: &State, var_name: &str) -> Result<Value, Error> {
+    Ok(ProcessEnv.get_field(var_name).unwrap_or_default())
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::domain::environment::Environment;
+    use crate::template::Renderer;
     use crate::test_utils::RenderBuilder;
     use std::collections::HashMap;
 
@@ -47,6 +52,21 @@ mod tests {
             RenderBuilder::new()
                 .with_function("processEnv", process_env)
                 .render(r#"{{ processEnv("USERNAME") }}"#),
+            std::env::var("USERNAME").unwrap()
+        );
+    }
+
+    #[test]
+    fn should_resolve_lazy_via_env_virtuell_object() {
+        let mut r = Renderer::new(&Environment::default());
+        #[cfg(not(windows))]
+        assert_eq!(
+            r.render(r#"{{ env.USER }}"#, "template").unwrap(),
+            std::env::var("USER").unwrap()
+        );
+        #[cfg(windows)]
+        assert_eq!(
+            r.render(r#"{{ env.USERNAME }}"#, "template").unwrap(),
             std::env::var("USERNAME").unwrap()
         );
     }

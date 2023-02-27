@@ -6,6 +6,8 @@ use functions::process_env::process_env;
 use functions::prompt::{prompt_for, prompt_password};
 
 use crate::domain::environment::Environment;
+use crate::template::functions::process_env::ProcessEnv;
+
 use minijinja::value::Value;
 use minijinja::Environment as MEnvironment;
 
@@ -30,6 +32,9 @@ impl<'source> Renderer<'source> {
         env.add_function("prompt_password", prompt_password);
         env.add_function("prompt_for", prompt_for);
         env.add_function("jwt", jwt);
+
+        // this provides lazy env var lookup
+        env.add_global("env", Value::from_struct_object(ProcessEnv));
 
         Self { env, ctx }
     }
