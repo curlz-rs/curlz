@@ -160,44 +160,44 @@ mod tests {
 
     #[rstest]
     #[case(
-    indoc! {r#"
+        indoc! {r#"
             ### GET gitignore template for rustlang 
             GET https://api.github.com/gitignore/templates/Rust HTTP/1.1
             Accept: application/json
-        "#},
-    Bookmark {
-    slug: "### GET gitignore template for rustlang".into(),
-    request: HttpRequest {
-    url: "https://api.github.com/gitignore/templates/Rust".into(),
-    method: HttpMethod::Get,
-    version: HttpVersion::Http11,
-    headers: HttpHeaders::from(["Accept: application/json".to_owned()].as_slice()),
-    body: HttpBody::default(),
-    curl_params: Default::default(),
-    placeholders: Default::default(),
-    }
-    }
+        "#}, 
+        Bookmark {
+            slug: "### GET gitignore template for rustlang".into(),
+            request: HttpRequest {
+                url: "https://api.github.com/gitignore/templates/Rust".into(),
+                method: HttpMethod::Get,
+                version: HttpVersion::Http11,
+                headers: HttpHeaders::from(["Accept: application/json".to_owned()].as_slice()),
+                body: HttpBody::default(),
+                curl_params: Default::default(),
+                placeholders: Default::default(),
+            }
+        }
     )]
     #[case(
-    indoc! {r#"
+        indoc! {r#"
             ### GET request with environment variables
             GET https://api.github.com/gitignore/templates/Rust HTTP/1.1
         "#},
-    Bookmark {
-    slug: "### GET request with environment variables".into(),
-    request: HttpRequest {
-    url: "https://api.github.com/gitignore/templates/Rust".into(),
-    method: HttpMethod::Get,
-    version: HttpVersion::Http11,
-    headers: Default::default(),
-    body: HttpBody::default(),
-    curl_params: Default::default(),
-    placeholders: Default::default(),
-    }
-    }
+        Bookmark {
+            slug: "### GET request with environment variables".into(),
+            request: HttpRequest {
+                url: "https://api.github.com/gitignore/templates/Rust".into(),
+                method: HttpMethod::Get,
+                version: HttpVersion::Http11,
+                headers: Default::default(),
+                body: HttpBody::default(),
+                curl_params: Default::default(),
+                placeholders: Default::default(),
+            }
+        }
     )]
     #[case(
-    indoc! {r#"
+        indoc! {r#"
             ### this is a POST request with a body
             POST https://httpbin.org/anything HTTP/1.1
             Accept: application/json
@@ -208,26 +208,26 @@ mod tests {
                 "bool": true
             }
         "#},
-    Bookmark {
-    slug: "### this is a POST request with a body".into(),
-    request: HttpRequest {
-    url: "https://httpbin.org/anything".into(),
-    method: HttpMethod::Post,
-    version: HttpVersion::Http11,
-    headers: HttpHeaders::from([
-    "Accept: application/json".to_owned(),
-    "Content-Type: application/json".to_owned(),
-    ].as_slice()),
-    body: HttpBody::InlineText(indoc! {r#"
-                    {
-                        "foo": "Bar",
-                        "bool": true
-                    }
+        Bookmark {
+            slug: "### this is a POST request with a body".into(),
+            request: HttpRequest {
+                url: "https://httpbin.org/anything".into(),
+                method: HttpMethod::Post,
+                version: HttpVersion::Http11,
+                headers: HttpHeaders::from([
+                    "Accept: application/json".to_owned(),
+                    "Content-Type: application/json".to_owned(),
+                ].as_slice()),
+                body: HttpBody::InlineText(indoc! {r#"
+                {
+                    "foo": "Bar",
+                    "bool": true
+                }
                 "#}.to_owned()),
-    curl_params: Default::default(),
-    placeholders: Default::default(),
-    }
-    }
+                curl_params: Default::default(),
+                placeholders: Default::default(),
+            }
+        }
     )]
     fn should_parse_a_http_message(
         #[case] request_file_contents: &str,
