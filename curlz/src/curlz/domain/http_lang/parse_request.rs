@@ -7,7 +7,7 @@ use pest::iterators::Pair;
 use pest::Parser;
 
 #[derive(Parser)]
-#[grammar = "curlz/domain/http_file/http-lang-grammar.pest"] // relative to project `src`
+#[grammar = "curlz/domain/http_lang/http-lang-grammar.pest"] // relative to project `src`
 struct HttpParser;
 
 pub fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow::Error> {

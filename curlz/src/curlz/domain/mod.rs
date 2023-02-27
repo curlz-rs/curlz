@@ -4,4 +4,4 @@ pub mod http;
 pub mod request;
 
 #[cfg(feature = "x-http-lang")]
-pub mod http_file;
+pub mod http_lang;

@@ -1,5 +1,5 @@
 use crate::domain::environment::create_environment;
-use crate::domain::http_file::parse_request_file;
+use crate::domain::http_lang::parse_request_file;
 use crate::domain::request::Verbosity::Verbose;
 use crate::domain::request::{issue_request_with_curl, IssueRequest};
 use crate::template::variables::Placeholder;
