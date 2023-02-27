@@ -1,10 +1,14 @@
+mod collection;
+mod collection_impl;
 mod load_bookmark;
 mod save_bookmark;
 
-pub use self::load_bookmark::LoadBookmark;
-pub use self::save_bookmark::SaveBookmark;
+pub use self::collection::BookmarkCollection;
+pub use self::collection_impl::BookmarkFolderCollection;
+pub use self::load_bookmark::*;
+pub use self::save_bookmark::*;
 
-use crate::request::http::HttpRequest;
+use crate::domain::http::HttpRequest;
 
 use serde::{Deserialize, Serialize};
 
@@ -37,7 +41,7 @@ impl Bookmark {
 }
 
 impl<'a> From<&SaveBookmark<'a>> for Bookmark {
-    fn from(cmd: &SaveBookmark) -> Self {
+    fn from(cmd: &SaveBookmark<'a>) -> Self {
         Self {
             slug: cmd.slug.clone(),
             request: cmd.bookmark.clone(),

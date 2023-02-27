@@ -27,11 +27,11 @@ jsonwebtoken = "8.1"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 
 ## experimental
-pest = "2.4"
-pest_derive = "2.4"
+pest = { version = "2.4", optional = true }
+pest_derive = { version = "2.4", optional = true }
 
 [features]
-"x-custom-template-language" = []
+"x-http-lang" = ['dep:pest', 'dep:pest_derive']
 
 [dev-dependencies]
 insta = "1"

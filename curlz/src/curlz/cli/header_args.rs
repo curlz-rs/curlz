@@ -1,4 +1,4 @@
-use crate::request::http::HttpHeaders;
+use crate::domain::http::HttpHeaders;
 
 pub struct HeaderArgs(Vec<String>);
 

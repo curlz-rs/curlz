@@ -1,48 +1,33 @@
-use crate::ops::{MutOperation, OperationContext, Verbosity};
-use crate::request::http::{HttpBody, HttpRequest};
+use self::curl_arg_conversions::IntoCurlArguments;
+use super::HttpBackend;
+use crate::domain::http::HttpBody;
+use crate::domain::request::{IssueRequest, RequestContext, Verbosity};
 use crate::Result;
-use std::ffi::OsStr;
 
 use anyhow::Context;
 use log::debug;
 use std::process::{Command, Stdio};
 
-/// consumes self, and turns it into arguments for a curl [`Command`]
-pub trait IntoCurlArguments<I, S> {
-    fn as_curl_parameter(&self) -> I
-    where
-        I: IntoIterator<Item = S>,
-        S: AsRef<OsStr>;
-}
+#[derive(Default)]
+pub struct InvokeCurlBackend;
 
-#[derive(Debug)]
-pub struct RunCurlCommand<'a> {
-    pub request: &'a HttpRequest,
-}
+/// It knows haw to issue a `HttpRequest`
+impl HttpBackend for InvokeCurlBackend {
+    fn issue(&self, req: &IssueRequest, context: &RequestContext) -> Result<()> {
+        let request = req.request;
+        let mut renderer = context.renderer_with_placeholders(&request.placeholders);
 
-impl<'a> RunCurlCommand<'a> {
-    pub fn new(request: &'a HttpRequest) -> Self {
-        Self { request }
-    }
-}
-
-impl<'a> MutOperation for RunCurlCommand<'a> {
-    type Output = ();
-
-    fn execute(&self, context: &mut OperationContext) -> Result<Self::Output> {
-        let mut renderer = context.renderer_with_placeholders(&self.request.placeholders);
-
-        let url = renderer.render(self.request.url.as_ref(), "url")?;
-        let _method: String = (&self.request.method).into();
+        let url = renderer.render(request.url.as_ref(), "url")?;
+        let _method: String = (&request.method).into();
 
         let mut cmd = Command::new("curl");
-        if context.verbosity.eq(&Verbosity::Silent) {
+        if req.verbosity.eq(&Verbosity::Silent) {
             cmd.arg("-s");
         }
-        let payload = if self.request.body.ne(&HttpBody::None) {
+        let payload = if request.body.ne(&HttpBody::None) {
             vec![
                 "--data".to_string(),
-                match &self.request.body {
+                match &request.body {
                     HttpBody::InlineText(s) => renderer.render(s.as_str(), "body")?,
                     HttpBody::InlineBinary(_) => todo!("inline binary data not impl yet"),
                     HttpBody::Extern(_) => todo!("external file data loading impl yet"),
@@ -53,16 +38,15 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
             vec![]
         };
 
-        cmd.args(self.request.method.as_curl_parameter())
+        cmd.args(request.method.as_curl_parameter())
             .args(
-                &self
-                    .request
+                &request
                     .curl_params
                     .iter()
                     .map(|s| renderer.render(s, "param"))
                     .collect::<Result<Vec<_>>>()?,
             )
-            .args(self.request.headers.as_ref().iter().flat_map(|(k, v)| {
+            .args(request.headers.as_ref().iter().flat_map(|(k, v)| {
                 let value = renderer.render(v, k).unwrap();
                 vec!["-H".to_string(), format!("{}: {}", k, value)]
             }))
@@ -80,8 +64,17 @@ impl<'a> MutOperation for RunCurlCommand<'a> {
 }
 
 mod curl_arg_conversions {
-    use super::IntoCurlArguments;
-    use crate::request::http::HttpMethod;
+    use crate::domain::http::HttpMethod;
+    use std::ffi::OsStr;
+
+    /// consumes self, and turns it into arguments for a curl [`Command`]
+    ///
+    pub trait IntoCurlArguments<I, S> {
+        fn as_curl_parameter(&self) -> I
+        where
+            I: IntoIterator<Item = S>,
+            S: AsRef<OsStr>;
+    }
 
     /// todo: not yet sure if that abstraction is really helpful or stands in the way
     impl IntoCurlArguments<Vec<String>, String> for HttpMethod {

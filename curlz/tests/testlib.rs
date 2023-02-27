@@ -10,7 +10,7 @@ use std::process::Command;
 use wiremock::matchers::{method, path};
 use wiremock::{Mock, MockServer, Request, Respond, ResponseTemplate};
 
-use curlz::request::http::{HttpBody, HttpMethod};
+use curlz::domain::http::{HttpBody, HttpMethod};
 
 pub fn binary() -> Command {
     Command::cargo_bin(env!("CARGO_PKG_NAME")).unwrap()

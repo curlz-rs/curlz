@@ -1,5 +1,6 @@
-use crate::ops::{Operation, OperationContext};
-use crate::request::http::HttpRequest;
+use crate::domain::bookmark::collection::BookmarkCollection;
+use crate::domain::bookmark::Bookmark;
+use crate::domain::http::HttpRequest;
 
 #[derive(Debug)]
 pub struct SaveBookmark<'a> {
@@ -16,10 +17,9 @@ impl<'a> SaveBookmark<'a> {
     }
 }
 
-impl<'a> Operation for SaveBookmark<'a> {
-    type Output = ();
-
-    fn execute(&self, context: &OperationContext) -> crate::Result<Self::Output> {
-        context.bookmark_collection().save(&(self).into())
-    }
+pub fn save_bookmark(
+    bm: SaveBookmark,
+    collection: &mut impl BookmarkCollection,
+) -> crate::Result<()> {
+    collection.save(&Bookmark::from(&bm))
 }

@@ -1,8 +1,10 @@
+use crate::template::variables::Placeholder;
 use std::collections::HashMap;
 use std::ffi::OsStr;
 use std::path::Path;
 
-use crate::workspace::{DotEnvFile, YamlEnvFile};
+use super::dot_env::DotEnvFile;
+use super::yaml_env::YamlEnvFile;
 
 #[derive(Default, Debug)]
 pub struct Environment(pub(crate) HashMap<String, String>);
@@ -50,36 +52,31 @@ impl From<&Environment> for minijinja::value::Value {
     }
 }
 
-#[cfg(feature = "liquid")]
-impl From<&Environment> for Object {
-    /// copies all entries into a [`Object`] for templating purpose
-    fn from(env: &Environment) -> Self {
-        let mut ctx = Object::new();
-        for (key, value) in env.0.iter() {
-            ctx.insert(
-                key.to_string().into(),
-                Value::Scalar(value.to_string().into()),
-            );
-        }
-
-        ctx
-    }
-}
-
-#[cfg(feature = "liquid")]
-impl From<&mut Environment> for Object {
-    /// copies all entries into a [`Object`] for templating purpose
-    fn from(env: &mut Environment) -> Self {
-        let mut ctx = Object::new();
-        for (key, value) in env.0.iter() {
-            ctx.insert(
-                key.to_string().into(),
-                Value::Scalar(value.to_string().into()),
-            );
-        }
-
-        ctx
-    }
+/// creates an [`Environment`] from a `.env` | `.yaml` | `.yml` file
+/// If the file does not exist, an empty [`Environment`] is returned.
+///
+/// ## Fallible
+/// If `env_file` is not a `.env` | `.yaml` | `.yml` file, an error is returned.
+/// If `env_file` is a directory, an error is returned.
+pub fn create_environment(
+    env_file: impl AsRef<Path>,
+    placeholders: &[Placeholder],
+) -> crate::Result<Environment> {
+    Environment::try_from(env_file.as_ref()).map(|mut env| {
+        placeholders
+            .iter()
+            .map(|placeholder| {
+                let Placeholder {
+                    name,
+                    value,
+                    default,
+                    ..
+                } = placeholder;
+                (name, value.as_ref().or(default.as_ref()).unwrap())
+            })
+            .for_each(|(k, v)| env.insert(k, v));
+        env
+    })
 }
 
 #[cfg(test)]

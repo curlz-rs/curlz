@@ -1,7 +1,6 @@
 use assert_cmd::prelude::*;
-use curlz::request::http::{HttpBody, HttpMethod};
+use curlz::domain::http::{HttpBody, HttpMethod};
 use predicates::prelude::*;
-use predicates::str::contains;
 
 use crate::testlib::{binary, CurlzTestSuite};
 
@@ -50,7 +49,7 @@ async fn should_send_as_post_with_body_variables() {
         .with_path("/post")
         .with_method(HttpMethod::Post)
         .with_payload(r#"{ "id": {{ id }}, "user": "{{ username }}" }"#)
-        .expect_payload(contains(r#"{ "id": 1, "user": "john" }"#))
+        .expect_payload(predicate::str::contains(r#"{ "id": 1, "user": "john" }"#))
         .send_request()
         .await;
 }

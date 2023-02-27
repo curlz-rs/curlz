@@ -4,18 +4,19 @@ use filenamify::filenamify;
 use std::path::PathBuf;
 use std::{env, fs};
 
-use crate::request::bookmark::Bookmark;
-use crate::request::http::HttpMethod;
+use crate::domain::bookmark::collection::BookmarkCollection;
+use crate::domain::bookmark::Bookmark;
+use crate::domain::http::HttpMethod;
 use crate::Result;
 
 const WORKSPACE_FOLDER: &str = ".curlz";
 const BOOKMARK_FOLDER: &str = "bookmarks";
 
-pub struct BookmarkCollection {
+pub struct BookmarkFolderCollection {
     working_dir: PathBuf,
 }
 
-impl BookmarkCollection {
+impl BookmarkFolderCollection {
     pub fn new() -> Result<Self> {
         Ok(Self {
             working_dir: env::current_dir()
@@ -24,8 +25,8 @@ impl BookmarkCollection {
     }
 }
 
-impl BookmarkCollection {
-    pub fn save(&self, bookmark: &Bookmark) -> Result<()> {
+impl BookmarkCollection for BookmarkFolderCollection {
+    fn save(&self, bookmark: &Bookmark) -> Result<()> {
         let slug = bookmark.slug();
         let request = bookmark.request();
 
@@ -46,7 +47,7 @@ impl BookmarkCollection {
         }
     }
 
-    pub fn load(&self, name: impl AsRef<str>, method: &HttpMethod) -> Result<Option<Bookmark>> {
+    fn load(&self, name: impl AsRef<str>, method: &HttpMethod) -> Result<Option<Bookmark>> {
         let slug = name.as_ref();
         let bookmarks_path = self
             .working_dir
@@ -65,14 +66,14 @@ impl BookmarkCollection {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::request::bookmark::SaveBookmark;
-    use crate::request::http::HttpVersion::Http11;
-    use crate::request::http::{HttpBody, HttpMethod};
-    use crate::request::http::{HttpHeaders, HttpRequest};
-    use crate::variables::Placeholder;
+    use crate::domain::bookmark::SaveBookmark;
+    use crate::domain::http::HttpVersion::Http11;
+    use crate::domain::http::{HttpBody, HttpMethod};
+    use crate::domain::http::{HttpHeaders, HttpRequest};
+    use crate::template::variables::Placeholder;
     use tempfile::{tempdir, TempDir};
 
-    impl BookmarkCollection {
+    impl BookmarkFolderCollection {
         pub fn temporary() -> (Self, TempDir) {
             let tempdir = tempdir().unwrap();
             (
@@ -97,7 +98,7 @@ mod tests {
         };
         let cmd = SaveBookmark::new("/protonmail/gpg/:email", &request);
 
-        let (p, tmp) = BookmarkCollection::temporary();
+        let (p, tmp) = BookmarkFolderCollection::temporary();
         p.save(&(&cmd).into()).unwrap();
 
         let saved_bookmark = String::from_utf8(

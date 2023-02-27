@@ -1,17 +1,16 @@
 //! a module for experimenting with the http language that the rest client uses
-use crate::request::bookmark::Bookmark;
-use crate::request::http::{HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
+use crate::domain::bookmark::Bookmark;
+use crate::domain::http::{HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion};
 
 use anyhow::anyhow;
 use pest::iterators::Pair;
 use pest::Parser;
 
 #[derive(Parser)]
-#[grammar = "curlz/parser/http-grammar.pest"] // relative to project `src`
+#[grammar = "curlz/domain/http_file/http-lang-grammar.pest"] // relative to project `src`
 struct HttpParser;
 
-#[allow(dead_code)]
-fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow::Error> {
+pub fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow::Error> {
     let mut requests = vec![];
 
     let req_file = req_file.as_ref();
@@ -152,8 +151,8 @@ impl TryFrom<Pair<'_, Rule>> for HttpBody {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::request::http::HttpVersion::Http11;
-    use crate::request::http::*;
+    use crate::domain::http::HttpVersion::Http11;
+    use crate::domain::http::*;
 
     use indoc::indoc;
     use pretty_assertions::assert_eq;
@@ -161,44 +160,44 @@ mod tests {
 
     #[rstest]
     #[case(
-        indoc! {r#"
+    indoc! {r#"
             ### GET gitignore template for rustlang 
             GET https://api.github.com/gitignore/templates/Rust HTTP/1.1
             Accept: application/json
         "#},
-        Bookmark {
-            slug: "### GET gitignore template for rustlang".into(),
-            request: HttpRequest {
-                url: "https://api.github.com/gitignore/templates/Rust".into(),
-                method: HttpMethod::Get,
-                version: HttpVersion::Http11,
-                headers: HttpHeaders::from(["Accept: application/json".to_owned()].as_slice()),
-                body: HttpBody::default(),
-                curl_params: Default::default(),
-                placeholders: Default::default(),
-            }
-        }
+    Bookmark {
+    slug: "### GET gitignore template for rustlang".into(),
+    request: HttpRequest {
+    url: "https://api.github.com/gitignore/templates/Rust".into(),
+    method: HttpMethod::Get,
+    version: HttpVersion::Http11,
+    headers: HttpHeaders::from(["Accept: application/json".to_owned()].as_slice()),
+    body: HttpBody::default(),
+    curl_params: Default::default(),
+    placeholders: Default::default(),
+    }
+    }
     )]
     #[case(
-        indoc! {r#"
+    indoc! {r#"
             ### GET request with environment variables
             GET https://api.github.com/gitignore/templates/Rust HTTP/1.1
         "#},
-        Bookmark {
-            slug: "### GET request with environment variables".into(),
-            request: HttpRequest {
-                url: "https://api.github.com/gitignore/templates/Rust".into(),
-                method: HttpMethod::Get,
-                version: HttpVersion::Http11,
-                headers: Default::default(),
-                body: HttpBody::default(),
-                curl_params: Default::default(),
-                placeholders: Default::default(),
-            }
-        }
+    Bookmark {
+    slug: "### GET request with environment variables".into(),
+    request: HttpRequest {
+    url: "https://api.github.com/gitignore/templates/Rust".into(),
+    method: HttpMethod::Get,
+    version: HttpVersion::Http11,
+    headers: Default::default(),
+    body: HttpBody::default(),
+    curl_params: Default::default(),
+    placeholders: Default::default(),
+    }
+    }
     )]
     #[case(
-        indoc! {r#"
+    indoc! {r#"
             ### this is a POST request with a body
             POST https://httpbin.org/anything HTTP/1.1
             Accept: application/json
@@ -209,26 +208,26 @@ mod tests {
                 "bool": true
             }
         "#},
-        Bookmark {
-            slug: "### this is a POST request with a body".into(),
-            request: HttpRequest {
-                url: "https://httpbin.org/anything".into(),
-                method: HttpMethod::Post,
-                version: HttpVersion::Http11,
-                headers: HttpHeaders::from([
-                    "Accept: application/json".to_owned(),
-                    "Content-Type: application/json".to_owned(),
-                ].as_slice()),
-                body: HttpBody::InlineText(indoc! {r#"
+    Bookmark {
+    slug: "### this is a POST request with a body".into(),
+    request: HttpRequest {
+    url: "https://httpbin.org/anything".into(),
+    method: HttpMethod::Post,
+    version: HttpVersion::Http11,
+    headers: HttpHeaders::from([
+    "Accept: application/json".to_owned(),
+    "Content-Type: application/json".to_owned(),
+    ].as_slice()),
+    body: HttpBody::InlineText(indoc! {r#"
                     {
                         "foo": "Bar",
                         "bool": true
                     }
                 "#}.to_owned()),
-                curl_params: Default::default(),
-                placeholders: Default::default(),
-            }
-        }
+    curl_params: Default::default(),
+    placeholders: Default::default(),
+    }
+    }
     )]
     fn should_parse_a_http_message(
         #[case] request_file_contents: &str,

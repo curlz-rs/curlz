@@ -1,26 +1,32 @@
 mod functions;
+pub mod variables;
 
 use functions::jwt::jwt;
+use functions::process_env::process_env;
 use functions::prompt::{prompt_for, prompt_password};
 
+use crate::domain::environment::Environment;
 use minijinja::value::Value;
-use minijinja::Environment;
+use minijinja::Environment as MEnvironment;
 
 pub struct Renderer<'source> {
-    env: Environment<'source>,
+    env: MEnvironment<'source>,
     ctx: Value,
 }
 
-impl<'source> From<&crate::workspace::Environment> for Renderer<'source> {
-    fn from(env: &crate::workspace::Environment) -> Self {
+impl<'source> From<&Environment> for Renderer<'source> {
+    fn from(env: &Environment) -> Self {
         Self::new(env)
     }
 }
 
 impl<'source> Renderer<'source> {
-    pub fn new(env: &crate::workspace::Environment) -> Self {
+    pub fn new(env: &Environment) -> Self {
         let ctx: Value = env.into();
-        let mut env = Environment::new();
+        let mut env = MEnvironment::new();
+        env.add_function("processEnv", process_env);
+        env.add_function("process_env", process_env);
+
         env.add_function("prompt_password", prompt_password);
         env.add_function("prompt_for", prompt_for);
         env.add_function("jwt", jwt);

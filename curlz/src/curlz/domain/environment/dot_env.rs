@@ -1,6 +1,5 @@
+use crate::domain::environment::Environment;
 use std::path::{Path, PathBuf};
-
-use crate::workspace::Environment;
 
 /// wraps a `.env` file, used to create an [`Environment`]
 pub struct DotEnvFile(PathBuf);

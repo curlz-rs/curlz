@@ -1,13 +1,18 @@
+use crate::cli::interactive;
 use crate::cli::HeaderArgs;
-use crate::interactive;
-use crate::ops::{MutOperation, Operation, OperationContext, RunCurlCommand};
-use crate::request::http::{
+use crate::domain::bookmark::{
+    load_bookmark, save_bookmark, BookmarkCollection, BookmarkFolderCollection, LoadBookmark,
+    SaveBookmark,
+};
+use crate::domain::http::{
     HttpBody, HttpHeaders, HttpMethod, HttpRequest, HttpUri, HttpVersion::Http11,
 };
+use crate::domain::request::Verbosity::{Silent, Verbose};
+use crate::domain::request::{issue_request_with_curl, IssueRequest};
+use crate::template::variables::Placeholder;
 use crate::utils::parse_pairs;
-use crate::variables::Placeholder;
 
-use crate::request::bookmark::{LoadBookmark, SaveBookmark};
+use crate::domain::environment::create_environment;
 use anyhow::Context;
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
@@ -84,11 +89,10 @@ fn parse_define(define: &str) -> Option<(&str, &str)> {
     parse_pairs(define, '=')
 }
 
-impl MutOperation for RequestCli {
-    type Output = ();
-
-    fn execute(&self, ctx: &mut OperationContext) -> crate::Result<Self::Output> {
+impl RequestCli {
+    pub fn execute(&self) -> crate::Result<()> {
         let placeholders = self.parse_define_as_placeholders();
+        let env = create_environment(&self.env_file, &placeholders)?;
         let mut raw = self.raw.clone();
 
         let method = extract_method(&mut raw)
@@ -104,7 +108,6 @@ impl MutOperation for RequestCli {
             headers.push("Accept", "application/json");
         }
 
-        // body
         let body = self
             .http_payload
             .as_ref()
@@ -127,10 +130,13 @@ impl MutOperation for RequestCli {
                     curl_params: raw,
                 }
             } else {
+                let bookmark_collection = bookmark_collection()?;
                 // here we might have a bookmark slug, but not sure yet
-                let bookmark = LoadBookmark::new(bookmark_or_url, method)
-                    .execute(ctx)?
-                    .context("No Bookmark with the given name found")?;
+                let bookmark = load_bookmark(
+                    LoadBookmark::new(bookmark_or_url, method),
+                    &bookmark_collection,
+                )
+                .context("No Bookmark with the given name found")?;
 
                 bookmark.request().update(|request| {
                     request.headers.merge(&headers);
@@ -153,7 +159,17 @@ impl MutOperation for RequestCli {
                 })?
         };
 
-        RunCurlCommand::new(&request).execute(ctx)?;
+        issue_request_with_curl(
+            IssueRequest::new(
+                &request,
+                if self.verbose.is_silent() {
+                    Silent
+                } else {
+                    Verbose
+                },
+            ),
+            &env,
+        )?;
 
         if self.save_bookmark || self.save_bookmark_as.is_some() {
             let slug = if let Some(answer) = self.save_bookmark_as.as_ref() {
@@ -162,13 +178,21 @@ impl MutOperation for RequestCli {
                 interactive::user_question("Please enter a bookmark name", &None)?
             };
 
-            SaveBookmark::new(slug.as_str(), &request).execute(ctx)?;
+            let mut bookmark_collection = bookmark_collection()?;
+            save_bookmark(
+                SaveBookmark::new(slug.as_str(), &request),
+                &mut bookmark_collection,
+            )?;
 
             info!("Request bookmarked as: {}", slug);
         }
 
         Ok(())
     }
+}
+
+fn bookmark_collection() -> crate::Result<impl BookmarkCollection> {
+    BookmarkFolderCollection::new()
 }
 
 /// checks if a string is a URL

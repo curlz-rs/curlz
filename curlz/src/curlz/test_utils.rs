@@ -1,11 +1,43 @@
 use minijinja::functions::Function;
 use minijinja::value::{FunctionArgs, FunctionResult, Value};
 use minijinja::Environment;
+use std::borrow::Cow;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::ops::Not;
 use std::path::Path;
 use tempfile::TempDir;
+
+pub mod sample_requests {
+    use crate::domain::http::*;
+    use indoc::indoc;
+
+    pub fn post_request() -> HttpRequest {
+        HttpRequest {
+            url: "https://httpbin.org/anything".into(),
+            method: HttpMethod::Post,
+            version: HttpVersion::Http11,
+            headers: HttpHeaders::from(
+                [
+                    "Accept: application/json".to_owned(),
+                    "Content-Type: application/json".to_owned(),
+                ]
+                .as_slice(),
+            ),
+            body: HttpBody::InlineText(
+                indoc! {r#"
+                    {
+                        "foo": "Bar",
+                        "bool": true
+                    }
+                "#}
+                .to_owned(),
+            ),
+            curl_params: Default::default(),
+            placeholders: Default::default(),
+        }
+    }
+}
 
 /// [`RenderBuilder`] simplifies test case creation
 pub struct RenderBuilder<'source> {
@@ -13,7 +45,10 @@ pub struct RenderBuilder<'source> {
 }
 
 impl<'source> RenderBuilder<'source> {
-    pub fn with_env_var(mut self, name: &'source str, value: impl Into<Value>) -> Self {
+    pub fn with_env_var<N>(mut self, name: N, value: impl Into<Value>) -> Self
+    where
+        N: Into<Cow<'source, str>>,
+    {
         self.env.add_global(name, value.into());
 
         self

@@ -1,5 +1,5 @@
 ---
-source: src/curlz/workspace/bookmark_collection.rs
+source: curlz/src/curlz/domain/bookmark/collection_impl/bookmark_folder_collection.rs
 expression: saved_bookmark
 ---
 slug: /protonmail/gpg/:email
