@@ -34,7 +34,6 @@
 
 ## WIP
 - [⏳] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
-       [check out the examples folder for more infos](./examples/http-file)
 
 ## Example #1
 

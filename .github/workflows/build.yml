@@ -115,7 +115,7 @@ jobs:
           default: true
           profile: minimal
       - uses: Swatinem/rust-cache@v1
-      - run: cargo publish --dry-run
+      - run: cargo publish --dry-run -p curlz
 
   docs:
     name: docs
