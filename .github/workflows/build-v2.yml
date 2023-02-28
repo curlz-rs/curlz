@@ -1,0 +1,99 @@
+name: Build v2
+on:
+  push:
+    branches: [ '*' ]
+    paths-ignore:
+      - "**/docs/**"
+      - "**.md"
+  pull_request:
+    branches: [ main ]
+  workflow_call:
+
+jobs:
+  check:
+    name: build crate
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
+        rust: [ nightly, stable ]
+    runs-on: ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo install cargo-insta
+      - run: cargo check
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo fmt --all -- --check
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo test --all --locked -- -Z unstable-options
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cargo insta test
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: smoke tests
+        run: |
+          cargo run -- --version
+          cargo run -- --help
+
+  audit:
+    name: security audit
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
+      - name: audit
+        uses: actions-rs/audit-check@v1
+        continue-on-error: true
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-dry-run:
+    name: publish dry run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
+      - run: cargo publish --dry-run -p curlz
+
+  docs:
+    name: docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v1
+      - name: check documentation
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: cargo doc --no-deps --all-features
