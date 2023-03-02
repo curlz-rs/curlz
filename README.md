@@ -69,3 +69,7 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   - `username`: the username as string
   - `password`: the password as string
 - output: string is a base64 encoded credential `username:password` 
+- examples:
+```sh
+curlz r -H 'Authorization: Basic {{ basic("joe", "secret") }}' https://httpbin.org/headers 
+```
