@@ -1,12 +1,11 @@
 mod functions;
 pub mod variables;
 
-use functions::jwt::jwt;
 use functions::process_env::process_env;
-use functions::prompt::{prompt_for, prompt_password};
 
 use crate::domain::environment::Environment;
 use crate::template::functions::process_env::ProcessEnv;
+use crate::template::functions::{auth, prompt};
 
 use minijinja::value::Value;
 use minijinja::Environment as MEnvironment;
@@ -29,9 +28,8 @@ impl<'source> Renderer<'source> {
         env.add_function("processEnv", process_env);
         env.add_function("process_env", process_env);
 
-        env.add_function("prompt_password", prompt_password);
-        env.add_function("prompt_for", prompt_for);
-        env.add_function("jwt", jwt);
+        prompt::register_functions(&mut env);
+        auth::register_functions(&mut env);
 
         // this provides lazy env var lookup
         env.add_global("env", Value::from_struct_object(ProcessEnv));

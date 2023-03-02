@@ -8,7 +8,11 @@ const CLAIM_EXPIRY: &str = "exp";
 const CLAIM_ISSUED_AT: &str = "iat";
 
 /// generates a jwt token based on some given claims
-pub fn jwt(state: &State, claims: Value, signing_key: Option<Value>) -> Result<String, Error> {
+pub(super) fn jwt(
+    state: &State,
+    claims: Value,
+    signing_key: Option<Value>,
+) -> Result<String, Error> {
     let mut claims: HashMap<String, serde_json::Value> =
         serde_json::from_str(claims.to_string().as_str()).unwrap();
 
