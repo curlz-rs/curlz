@@ -63,3 +63,9 @@ In this example we're going to download a pre-configured `.gitignore` for a give
   - the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
   - the claim `exp` expiry time is set to in 15min by default, but can be overwritten
   - the claim `iat` issued at timestamp is set automatically and cannot be overwritten
+
+### Basic Auth Token - `basic(username: string, password: string)`
+- arguments: 
+  - `username`: the username as string
+  - `password`: the password as string
+- output: string is a base64 encoded credential `username:password` 
