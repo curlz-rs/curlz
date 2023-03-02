@@ -1,0 +1,3 @@
+### sending a basic auth token via Authorization-Header
+GET https://httpbin.org/headers HTTP/1.1
+Authorization: Basic {{ basic("joe", "secret") }}
