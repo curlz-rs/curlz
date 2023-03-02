@@ -82,6 +82,17 @@ impl<'source> RenderBuilder<'source> {
         self
     }
 
+    /// registers an object as e.g. global object
+    pub fn with_object<N, V>(mut self, name: N, value: V) -> Self
+    where
+        N: Into<Cow<'source, str>>,
+        V: Into<Value>,
+    {
+        self.env.add_global(name.into(), value.into());
+
+        self
+    }
+
     /// it renders a given template
     pub fn render(mut self, template: &'source str) -> String {
         let name = "render-builder-template";
@@ -111,6 +122,7 @@ pub fn create_file(
 
     Ok(base_path)
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;
