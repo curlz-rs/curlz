@@ -1,7 +1,7 @@
 mod functions;
 pub mod variables;
 
-use functions::jwt::jwt;
+use functions::auth::jwt;
 use functions::process_env::process_env;
 use functions::prompt::{prompt_for, prompt_password};
 
