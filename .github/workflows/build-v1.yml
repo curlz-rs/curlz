@@ -1,4 +1,4 @@
-name: Build Faster
+name: Build
 on:
   push:
     branches: [ '*' ]
@@ -11,12 +11,11 @@ on:
 
 jobs:
   check:
-    name: build crate
+    name: check
     strategy:
       fail-fast: false
       matrix:
         version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
-        rust: [ nightly, stable ]
     runs-on: ${{ matrix.version }}
     steps:
       - uses: actions/checkout@v3
@@ -28,19 +27,56 @@ jobs:
           profile: minimal
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@v2
-      - run: cargo install cargo-insta
       - run: cargo check
-        continue-on-error: ${{ matrix.rust == 'nightly' }}
-      - run: cargo fmt --all -- --check
-        continue-on-error: ${{ matrix.rust == 'nightly' }}
-      - run: cargo clippy --all-targets --all-features -- -D warnings
-        continue-on-error: ${{ matrix.rust == 'nightly' }}
-      - run: cargo test --all-features --all --locked -- -Z unstable-options
-        continue-on-error: ${{ matrix.rust == 'nightly' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: cargo insta test
-        continue-on-error: ${{ matrix.rust == 'nightly' }}
+
+  lint:
+    name: lint
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
+        cargo-cmd:
+          - fmt --all -- --check
+          - clippy --all-targets --all-features -- -D warnings
+    runs-on: ${{ matrix.version }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo ${{ matrix['cargo-cmd'] }}
+
+  tests:
+    name: test
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
+        rust: [ nightly, stable ]
+        cargo-cmd:
+          - test --all --locked -- -Z unstable-options
+          - insta test
+    runs-on: ${{ matrix.version }}
+    continue-on-error: ${{ matrix.rust == 'nightly' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.rust }}
+          default: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo install cargo-insta
+      - name: test
+        run: cargo ${{ matrix['cargo-cmd'] }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: smoke tests
