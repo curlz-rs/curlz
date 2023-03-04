@@ -1,0 +1,76 @@
+name: Release Binary Assets
+on:
+  release:
+    types:
+      - published
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+            binName: curlz
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+            binName: curlz
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: true
+            binName: curlz
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: true
+            binName: curlz
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            cross: false
+            binName: curlz
+          - target: aarch64-apple-darwin
+            os: macos-latest
+            cross: true
+            binName: curlz
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            cross: false
+            binName: curlz.exe
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          use-cross: ${{ matrix.cross }}
+          args: --all-features --release --target=${{ matrix.target }}
+      - name: Create Archive
+        id: archive
+        shell: bash
+        env:
+          TARGET: ${{ matrix.target }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          filename="curlz-$TAG-$TARGET.tar.gz"
+          tar -czvf "$filename" README.md LICENSE-APACHE -C "target/$TARGET/release" "${{ matrix.binName }}"
+          echo "::set-output name=filename::$filename"
+      - name: Upload Archive
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GH_PAT }}
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: ${{ steps.archive.outputs.filename }}
+          artifactContentType: application/octet-stream
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
+          omitPrereleaseDuringUpdate: true

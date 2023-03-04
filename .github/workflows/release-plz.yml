@@ -1,4 +1,4 @@
-name: release-plz
+name: Release PR+Tag+Publish
 on:
   push:
     branches:
@@ -6,13 +6,15 @@ on:
 
 jobs:
   release-plz:
-    name: Release-plz
+    name: Release it all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@main
         env:
