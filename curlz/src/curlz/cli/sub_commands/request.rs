@@ -46,11 +46,12 @@ pub struct RequestCli {
     /// set one ore more http headers in the form of `"Header-Name: Value"`
     ///
     /// ## Examples
-    /// ```sh
-    /// curlz -H "X-First-Name: Joe" https://example.com
-    /// curlz -H "User-Agent: yes-please/2000" https://example.com
-    /// curlz -H "Host:" https://example.com
-    /// ```
+    ///
+    /// - `curlz -H "X-First-Name: Joe" https://example.com`
+    ///
+    /// - `curlz -H "User-Agent: yes-please/2000" https://example.com`
+    ///
+    /// - `curlz -H "Host:" https://example.com`
     #[clap(long = "header", short = 'H', value_parser)]
     pub headers: Vec<String>,
 
@@ -59,20 +60,18 @@ pub struct RequestCli {
     pub http_payload: Option<String>,
 
     /// this is a lazy shortcut for setting 2 headers and a http body
-    /// ```sh
-    /// curlz -H "Content-Type: application/json" -H "Accept: application/json" --data <json-data>
-    /// ```
+    ///
+    /// `curlz -H "Content-Type: application/json" -H "Accept: application/json" --data <json-data>`
     #[clap(long = "json", value_parser)]
     pub json: Option<String>,
 
     /// <user:password>
     /// Specify the user name and password to use for server authentication.
+    ///
     /// Note: in cases where only the user is provided,
     ///       curlz will prompt for the password interactively
-    /// Equivalent to:
-    /// ```sh
-    /// curlz -H 'Authorization: Basic {{ basic("user", "password") }}'
-    /// ```
+    ///
+    /// Equivalent to: `curlz -H 'Authorization: Basic {{ basic("user", "password") }}'`
     #[clap(short = 'u', long = "user", value_parser)]
     pub user: Option<String>,
 
