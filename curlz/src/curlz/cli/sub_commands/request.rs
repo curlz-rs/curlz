@@ -120,24 +120,7 @@ impl RequestCli {
             headers.push("Accept", "application/json");
         }
         if self.user.is_some() {
-            let user_pw: Vec<&str> = self.user.as_ref().unwrap().split_terminator(':').collect();
-            let header_value = match user_pw.len() {
-                1 => {
-                    format!(
-                        r#"Basic {{{{ basic("{}", prompt_password()) }}}}"#,
-                        user_pw.first().unwrap()
-                    )
-                }
-                2 => {
-                    format!(
-                        r#"Basic {{{{ basic("{}", "{}") }}}}"#,
-                        user_pw.first().unwrap(),
-                        user_pw.get(1).unwrap()
-                    )
-                }
-                _ => bail!("-u | -user argument was invalid"),
-            };
-            headers.push("Authorization", header_value);
+            parse_user_to_header(self.user.as_ref().unwrap(), &mut headers)?;
         }
 
         let body = self
@@ -221,6 +204,29 @@ impl RequestCli {
 
         Ok(())
     }
+}
+
+fn parse_user_to_header(user: &str, headers: &mut HttpHeaders) -> crate::Result<()> {
+    let user_pw: Vec<&str> = user.split_terminator(':').collect();
+    let header_value = match user_pw.len() {
+        1 => {
+            format!(
+                r#"Basic {{{{ basic("{}", prompt_password()) }}}}"#,
+                user_pw.first().unwrap()
+            )
+        }
+        2 => {
+            format!(
+                r#"Basic {{{{ basic("{}", "{}") }}}}"#,
+                user_pw.first().unwrap(),
+                user_pw.get(1).unwrap()
+            )
+        }
+        _ => bail!("-u | -user argument was invalid"),
+    };
+    headers.push("Authorization", header_value);
+
+    Ok(())
 }
 
 fn bookmark_collection() -> crate::Result<impl BookmarkCollection> {
@@ -366,5 +372,31 @@ mod tests {
         assert_eq!(args.len(), 2);
         assert_eq!(args.first(), Some(&"-vvv".to_string()));
         assert_eq!(args.last(), Some(&"http://example.com".to_string()));
+    }
+
+    #[test]
+    fn should_parse_user_to_header() {
+        let mut headers = HttpHeaders::default();
+        parse_user_to_header("john:secret", &mut headers).unwrap();
+        assert_eq!(
+            headers.get("Authorization").unwrap(),
+            r#"Basic {{ basic("john", "secret") }}"#
+        )
+    }
+    #[test]
+    fn should_parse_user_to_header_without_password() {
+        let mut headers = HttpHeaders::default();
+        parse_user_to_header("john", &mut headers).unwrap();
+        assert_eq!(
+            headers.get("Authorization").unwrap(),
+            r#"Basic {{ basic("john", prompt_password()) }}"#
+        )
+    }
+
+    #[test]
+    #[should_panic(expected = "-u | -user argument was invalid")]
+    fn should_bail_on_garbage_in() {
+        let mut headers = HttpHeaders::default();
+        parse_user_to_header("john:xxxx:asdfa", &mut headers).unwrap();
     }
 }

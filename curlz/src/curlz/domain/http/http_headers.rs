@@ -20,6 +20,14 @@ impl HttpHeaders {
     pub fn merge(&mut self, other: &HttpHeaders) {
         self.0.extend(other.0.iter().cloned());
     }
+
+    pub fn get(&self, key: impl Into<String>) -> Option<&str> {
+        let key = key.into();
+        self.0
+            .iter()
+            .find(|(hn, _)| hn.as_str() == key)
+            .map(|x| x.1.as_ref())
+    }
 }
 
 impl AsRef<[(String, String)]> for HttpHeaders {

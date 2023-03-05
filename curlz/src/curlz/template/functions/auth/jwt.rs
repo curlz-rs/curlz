@@ -74,16 +74,16 @@ mod tests {
 
     #[rstest]
     #[case(
-        r#"Bearer {{ jwt({"sub": "b@b.com"}, "000") }}"#, 
+        r#"Bearer {{ jwt({"sub": "b@b.com"}, "000") }}"#,
         RenderBuilder::new().with_function("jwt", jwt)
     )]
     #[case(
-        r#"Bearer {{ jwt({"sub": "b@b.com"}) }}"#, 
+        r#"Bearer {{ jwt({"sub": "b@b.com"}) }}"#,
         RenderBuilder::new().with_function("jwt", jwt)
             .with_env_var("jwt_signing_key", "000")
     )]
     #[case(
-        r#"Bearer {{ jwt({"sub": "b@b.com", "iat": 666}) }}"#, 
+        r#"Bearer {{ jwt({"sub": "b@b.com", "iat": 666}) }}"#,
         RenderBuilder::new().with_function("jwt", jwt)
             .with_env_var("jwt_signing_key", "000")
     )]
@@ -123,7 +123,6 @@ mod tests {
                 .timestamp(),
             "token should expire in 15min"
         );
-        dbg!(token_message.claims.iat);
         assert_eq!(
             token_message.claims.iat,
             now.with_second(0).unwrap().timestamp(),
