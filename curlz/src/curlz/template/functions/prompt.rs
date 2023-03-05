@@ -8,7 +8,7 @@ pub fn register_functions(env: &mut Environment) {
 }
 
 /// prompt for a password, to be used in a minijinja template
-fn prompt_password(_state: &minijinja::State, _args: Vec<Value>) -> Result<String, Error> {
+fn prompt_password(_state: &minijinja::State) -> Result<String, Error> {
     Password::new()
         .with_prompt("Password")
         .allow_empty_password(true)
