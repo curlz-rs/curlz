@@ -61,7 +61,7 @@ jobs:
           TAG: ${{ github.event.release.tag_name }}
         run: |
           filename="curlz-$TAG-$TARGET.tar.gz"
-          tar -czvf "$filename" README.md LICENSE-APACHE -C "target/$TARGET/release" "${{ matrix.binName }}"
+          tar -czvf "$filename" README.md LICENSE -C "target/$TARGET/release" "${{ matrix.binName }}"
           echo "::set-output name=filename::$filename"
       - name: Upload Archive
         uses: ncipollo/release-action@v1
