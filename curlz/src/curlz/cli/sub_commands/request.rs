@@ -13,7 +13,7 @@ use crate::template::variables::Placeholder;
 use crate::utils::parse_pairs;
 
 use crate::domain::environment::create_environment;
-use anyhow::Context;
+use anyhow::{bail, Context};
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, Verbosity};
 use log::info;
@@ -60,9 +60,21 @@ pub struct RequestCli {
 
     /// this is a lazy shortcut for setting 2 headers and a http body
     /// ```sh
-    /// curlz -H "Content-Type: application/json" -H "Accept: application/json"
+    /// curlz -H "Content-Type: application/json" -H "Accept: application/json" --data <json-data>
+    /// ```
     #[clap(long = "json", value_parser)]
     pub json: Option<String>,
+
+    /// <user:password>
+    /// Specify the user name and password to use for server authentication.
+    /// Note: in cases where only the user is provided,
+    ///       curlz will prompt for the password interactively
+    /// Equivalent to:
+    /// ```sh
+    /// curlz -H 'Authorization: Basic {{ basic("user", "password") }}'
+    /// ```
+    #[clap(short = 'u', long = "user", value_parser)]
+    pub user: Option<String>,
 
     #[clap(value_parser)]
     pub bookmark_or_url: Option<String>,
@@ -106,6 +118,26 @@ impl RequestCli {
         if self.json.is_some() {
             headers.push("Content-Type", "application/json");
             headers.push("Accept", "application/json");
+        }
+        if self.user.is_some() {
+            let user_pw: Vec<&str> = self.user.as_ref().unwrap().split_terminator(':').collect();
+            let header_value = match user_pw.len() {
+                1 => {
+                    format!(
+                        r#"Basic {{{{ basic("{}", prompt_password()) }}}}"#,
+                        user_pw.first().unwrap()
+                    )
+                }
+                2 => {
+                    format!(
+                        r#"Basic {{{{ basic("{}", "{}") }}}}"#,
+                        user_pw.first().unwrap(),
+                        user_pw.get(1).unwrap()
+                    )
+                }
+                _ => bail!("-u | -user argument was invalid"),
+            };
+            headers.push("Authorization", header_value);
         }
 
         let body = self
