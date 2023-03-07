@@ -5,13 +5,14 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 use env_logger::Target;
 
 #[derive(Clone, Debug, Parser)]
-#[clap(author, version, about, long_about = None, arg_required_else_help(true))]
-#[clap(propagate_version = true)]
-#[clap(name = "curlz")]
+#[command(author, version, about, long_about = None )]
+#[clap(subcommand_required = true, arg_required_else_help = true)]
+#[command(propagate_version = true)]
+#[command(name = "curlz")]
 pub struct Cli {
-    #[clap(flatten)]
+    #[command(flatten)]
     verbose: Verbosity<InfoLevel>,
-    #[clap(subcommand)]
+    #[command(subcommand)]
     pub command: SubCommands,
 }
 

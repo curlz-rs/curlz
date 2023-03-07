@@ -10,8 +10,9 @@ include = ["src/**/*", "LICENSE", "*.md"]
 [dependencies]
 env_logger = "0.10"
 log = "0.4"
-clap = { version = "3.2", features = ["derive", "std", "cargo"], default-features = false }
-clap-verbosity-flag = "1.0"
+clap = { version = "4.1", features = ["derive", "std", "cargo", "usage", "help"] }
+#clap_complete = "4.1"
+clap-verbosity-flag = "2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 dotenvy = { version = "0.15" }
