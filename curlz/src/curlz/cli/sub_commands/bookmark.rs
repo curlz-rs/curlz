@@ -1,8 +1,8 @@
 use clap::{Args, Subcommand};
 
 #[derive(Clone, Debug, Args)]
-#[clap(arg_required_else_help(true))]
-#[clap(args_conflicts_with_subcommands = true)]
+#[command(arg_required_else_help = true)]
+#[command(args_conflicts_with_subcommands = true)]
 pub struct BookmarkCli {
     #[clap(subcommand)]
     pub command: BookmarkCommands,

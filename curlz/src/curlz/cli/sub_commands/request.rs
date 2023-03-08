@@ -21,7 +21,8 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Parser)]
-#[clap(author, version, about, long_about = None, arg_required_else_help(true))]
+#[command(author, version, about, long_about = None)]
+#[clap(arg_required_else_help = true)]
 pub struct RequestCli {
     #[clap(flatten)]
     pub verbose: Verbosity<InfoLevel>,
@@ -78,7 +79,7 @@ pub struct RequestCli {
     #[clap(value_parser)]
     pub bookmark_or_url: Option<String>,
 
-    #[clap(value_parser, last = true, multiple = true)]
+    #[clap(value_parser, last = true)]
     pub raw: Vec<String>,
 }
 
