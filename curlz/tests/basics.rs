@@ -9,11 +9,25 @@ mod testlib;
 #[test]
 fn should_show_usage_when_no_args_passed() {
     #[cfg(windows)]
-    let pattern = predicate::str::contains("Usage: curlz.exe [OPTIONS] <COMMAND>");
+    let pattern = predicate::str::contains("Usage: curlz.exe [OPTIONS] [COMMAND]");
     #[cfg(not(windows))]
-    let pattern = predicate::str::contains("Usage: curlz [OPTIONS] <COMMAND>");
+    let pattern = predicate::str::contains("Usage: curlz [OPTIONS] [COMMAND]");
 
     binary().assert().failure().stderr(pattern);
+}
+
+#[test]
+fn should_show_completions() {
+    #[cfg(windows)]
+    let pattern = predicate::str::contains("#compdef curlz");
+    #[cfg(not(windows))]
+    let pattern = predicate::str::contains("#compdef curlz");
+
+    binary()
+        .args(["--completions", "zsh"])
+        .assert()
+        .success()
+        .stdout(pattern);
 }
 
 #[tokio::test]
