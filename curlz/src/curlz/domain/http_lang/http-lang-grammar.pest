@@ -1,16 +1,17 @@
 request = { request_line ~ headers? ~ (NEWLINE ~ body)? }
-request_line = _{ method ~ " "+ ~ uri ~ " "+ ~ version ~ NEWLINE }
+
+request_line = _{ method ~ whitespace ~ uri ~ whitespace ~ version ~ whitespace* ~ NEWLINE }
 uri = { (!whitespace ~ ANY)+ }
-method = { "GET" | "POST" | "PUT" }
+method = { "GET" | "POST" | "PUT" | "DELETE" }
 version = { "HTTP/" ~ (ASCII_DIGIT | ".")+ }
-whitespace = _{ " " | "\t" }
+whitespace = _{ (" " | "\t")+ }
 
 headers = { header+ }
-header = { header_name ~ ":" ~ whitespace ~ header_value ~ NEWLINE }
+header = { header_name ~ ":" ~ whitespace* ~ header_value ~ whitespace* ~ NEWLINE }
 header_name = { (!(":" | NEWLINE) ~ ANY)+ }
 header_value = { (!NEWLINE ~ ANY)+ }
 
 body = { (!delimiter ~ ANY)+ }
-delimiter = { "#"{3} ~ (!NEWLINE ~ ANY)+ ~ NEWLINE+ }
+delimiter = { "#"{3} ~ (!NEWLINE ~ ANY)+ ~ whitespace* ~ NEWLINE+ }
 
 file = { SOI ~ (delimiter? ~ request) ~ (delimiter ~ request)* ~ EOI}
