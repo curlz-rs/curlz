@@ -51,7 +51,7 @@ dependencies = [
  "anstyle",
  "bstr",
  "doc-comment",
- "predicates",
+ "predicates 2.1.5",
  "predicates-core",
  "predicates-tree",
  "wait-timeout",
@@ -294,7 +294,7 @@ dependencies = [
 
 [[package]]
 name = "curlz"
-version = "0.1.0-alpha.10"
+version = "0.1.0-alpha.11"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -315,7 +315,7 @@ dependencies = [
  "minijinja-stack-ref",
  "pest",
  "pest_derive",
- "predicates",
+ "predicates 3.0.1",
  "pretty_assertions",
  "rstest",
  "serde",
@@ -1156,6 +1156,18 @@ name = "ppv-lite86"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b40af805b3121feab8a3c29f04d8ad262fa8e0561883e7653e024ae4479e6de"
+
+[[package]]
+name = "predicates"
+version = "3.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1ba7d6ead3e3966038f68caa9fc1f860185d95a793180bbcfe0d0da47b3961ed"
+dependencies = [
+ "anstyle",
+ "difflib",
+ "itertools",
+ "predicates-core",
+]
 
 [[package]]
 name = "predicates"

@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.11](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.10...v0.1.0-alpha.11) - 2023-03-15
+
+### Fixed
+- *(deps)* update rust crate jsonwebtoken to 8.3 (#73)
+- *(deps)* update rust crate jsonwebtoken to 8.2 (#66)
+- *(deps)* update rust crate pest_derive to 2.5 (#68)
+
+### Other
+- *(deps)* update rust crate predicates to v3 (#72)
+- *(deps)* update rust crate tempfile to 3.4 (#65)
+- release v0.1.0-alpha.10 (#53)
+
 ## [0.1.0-alpha.10](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.9...v0.1.0-alpha.10) - 2023-03-14
 
 ### Added
