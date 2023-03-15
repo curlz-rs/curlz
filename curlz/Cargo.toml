@@ -24,7 +24,7 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 
 minijinja = "0.30"
 
-jsonwebtoken = "8.2"
+jsonwebtoken = "8.3"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 base64 = "0.21"
 
