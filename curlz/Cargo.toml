@@ -30,7 +30,7 @@ base64 = "0.21"
 
 ## experimental
 pest = { version = "2.5", optional = true }
-pest_derive = { version = "2.4", optional = true }
+pest_derive = { version = "2.5", optional = true }
 minijinja-stack-ref = "0.30"
 
 [features]
