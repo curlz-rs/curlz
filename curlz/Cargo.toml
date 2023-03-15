@@ -38,7 +38,7 @@ minijinja-stack-ref = "0.30"
 
 [dev-dependencies]
 insta = "1"
-tempfile = "3.3"
+tempfile = "3.4"
 assert_cmd = "2.0"
 predicates = "2.1"
 rstest = "0.16"
