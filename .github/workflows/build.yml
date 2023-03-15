@@ -59,7 +59,7 @@ jobs:
           toolchain: stable
           default: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - name: cargo tarpaulin
         uses: actions-rs/tarpaulin@v0.1
         with:
