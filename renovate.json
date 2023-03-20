@@ -3,26 +3,11 @@
   "extends": [
     "config:base"
   ],
-  "packageRules": [
-    {
-      "groupName": "all minor dependencies",
-      "groupSlug": "all-minor",
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "minor"
-      ]
-    },
-    {
-      "groupName": "all patch dependencies",
-      "groupSlug": "all-patch",
-      "matchPackagePatterns": [
-        "*"
-      ],
-      "matchUpdateTypes": [
-        "patch"
-      ]
-    }
-  ]
+  "separateMinorPatch": true,
+  "minor": {
+    "groupName": "bump minor versions"
+  },
+  "patch": {
+    "groupName": "bump patch versions"
+  }
 }
