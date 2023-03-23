@@ -2,9 +2,10 @@
 
 ## Features
 
-### Placeholders everywhere 
+### Placeholders everywhere
 
 ️placeholders at the beginning of an url e.g.
+
 ```sh
 curlz r --define 'host=https://httpbin.org' '{{host}}/get'
 ````
