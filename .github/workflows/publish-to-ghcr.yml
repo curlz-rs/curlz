@@ -3,8 +3,8 @@
 name: publish docker image to ghcr.io
 
 on:
-  workflow_dispatch:
   workflow_call:
+  workflow_dispatch:
     inputs:
       releaseVersion:
         description: version without 'v' to be released
@@ -12,7 +12,7 @@ on:
         type: string
     secrets:
       - GH_PAT:
-        required: true
+          required: true
   release:
     types:
       - published
