@@ -17,8 +17,8 @@ on:
     types:
       - published
 
+#  LATEST_RELEASE_VERSION: ${{ github.event.release.tag_name || inputs.releaseVersion }}
 env:
-  #  LATEST_RELEASE_VERSION: ${{ github.event.release.tag_name || inputs.releaseVersion }}
   LATEST_RELEASE_VERSION: ${{ inputs.releaseVersion }}
   LATEST_RELEASE_TAG: v${{ env.LATEST_RELEASE_VERSION }}
 
