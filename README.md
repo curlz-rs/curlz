@@ -15,22 +15,13 @@
 
 - variables from `.env` and `.yaml` environment files
 - ️placeholder evaluation using the [minijinja](https://docs.rs/minijinja/latest/minijinja/) template engine, which can be used in URLs, HTTP headers, the HTTP body, and other passed curl parameters
-- ability to save and execute requests as bookmarks with a shortname
+- ability to save requests as bookmarks and execute them by a shortname
 - support any curl argument after a `--`, that makes a drop-in-replacement for curl
-- special placeholders to interact with the user
-  - prompt for a password as `{{ prompt_password() }}` 
-  `curlz r https://api.github.com/user -- -u "{{ username }}:{{ prompt_password() }}"`
-  - prompt for interactive input with a label as `{{ prompt_for("Username") }}` or `{{ prompt_for("Birthdate") }}`
-  `curlz -- -u "{{ prompt_for("Username") }}:{{ prompt_password() }}" https://api.github.com/user`
-- ️evaluate placeholders at the beginning of an url like:
-`curlz r --define 'host=https://httpbin.org' '{{host}}/get'`
-- ️special placeholder for developers, like for Json Web Tokens (JWT)
-`{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
-`curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv`
-- send a http body via `-d | --data` 
-`curlz r -d 'Hello World' -X POST https://httpbin.org/anything`
-- send a json payload and headers with the `--json` argument
-`curlz r --json '{ "foo": "bar" }' -X POST 'https://httpbin.org/anything'`
+- special placeholders to interact on the terminal
+  - prompt for a password as `{{ prompt_password() }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-input---prompt_forname-string)
+  - prompt for interactive input with a label as `{{ prompt_for("Username") }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-for-password---prompt_password)
+- ️special placeholder for developers, like [Json Web Tokens (JWT)](https://curlz-rs.github.io/curlz/template-functions.html#json-web-token---jwtclaims-map-signing_key-string) or [Basic-Auth](https://curlz-rs.github.io/curlz/template-functions.html#basic-auth-token---basicusername-string-password-string) 
+- send a http body via `-d | --data` or send json payload (with headers) via `--json`
 
 ## WIP
 - [⏳] support rest client template language [see #5](https://github.com/curlz-rs/curlz/issues/5)
@@ -54,4 +45,4 @@ In this example we're going to download a pre-configured `.gitignore` for a give
 
 ## Template function documentation
 
-please read the book to learn more about the template functions
+Please read [the book to learn more about the template functions](https://curlz-rs.github.io/curlz/template-functions.html#template-function-documentation)

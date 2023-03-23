@@ -21,6 +21,7 @@ convert_case = "0.6"
 dialoguer = "0.10"
 filenamify = "0.1"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
+humantime = "2.1"
 
 minijinja = "0.30"
 
