@@ -17,11 +17,6 @@ on:
     types:
       - published
 
-#  LATEST_RELEASE_VERSION: ${{ github.event.release.tag_name || inputs.releaseVersion }}
-env:
-  LATEST_RELEASE_VERSION: ${{ inputs.releaseVersion }}
-  LATEST_RELEASE_TAG: v${{ env.LATEST_RELEASE_VERSION }}
-
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -43,6 +38,10 @@ jobs:
       - name: Build & Push Images
         shell: bash
         working-directory: docker
+        env:
+          LATEST_RELEASE_VERSION: ${{ inputs.releaseVersion }}
+          LATEST_RELEASE_TAG: v${{ env.LATEST_RELEASE_VERSION }}
+        #  LATEST_RELEASE_VERSION: ${{ github.event.release.tag_name || inputs.releaseVersion }}
         run: |
           make build
           make test
