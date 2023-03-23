@@ -19,10 +19,10 @@
 - ability to save requests as bookmarks and execute them by a shortname
 - support any curl argument after a `--`, that makes a drop-in-replacement for curl
 - special placeholders to interact on the terminal
-    - prompt for a password
-      as `{{ prompt_password() }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-input---prompt_forname-string)
-    - prompt for interactive input with a label
-      as `{{ prompt_for("Username") }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-for-password---prompt_password)
+  - prompt for a password
+    as `{{ prompt_password() }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-input---prompt_forname-string)
+  - prompt for interactive input with a label
+    as `{{ prompt_for("Username") }}` [read more..](https://curlz-rs.github.io/curlz/template-functions.html#prompt-user-for-password---prompt_password)
 - ️special placeholder for developers,
   like [Json Web Tokens (JWT)](https://curlz-rs.github.io/curlz/template-functions.html#json-web-token---jwtclaims-map-signing_key-string)
   or [Basic-Auth](https://curlz-rs.github.io/curlz/template-functions.html#basic-auth-token---basicusername-string-password-string)
