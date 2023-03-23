@@ -20,7 +20,7 @@
 - arguments: None
 - output: string
 
-### Example
+### Example: Username
 
 let the user enter an arbitrary username:
 
@@ -46,7 +46,7 @@ curlz r -u '{{ prompt_for("GitHub Username") }}:{{ prompt_password() }}' https:/
   - the claim `iat` issued at timestamp is set automatically, can't be overwritten
   - you can find a full [list of commonly used claims at iana.org](https://www.iana.org/assignments/jwt/jwt.xhtml)
 
-### Example
+### Example: Simple Claims
 
 This example illustrates how a JWT Signing Key will be used from a `.env` file implicitly.
 Given an `.env` file like this:
