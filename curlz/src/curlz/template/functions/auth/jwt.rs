@@ -253,6 +253,23 @@ mod tests {
         }
 
         #[test]
+        fn test_default_value_on_invalid() {
+            let mut hm = ClaimsMap::default();
+            hm.insert("exp".to_string(), Value::from(vec!["a", "b"]));
+            prepare_claim_exp(&mut hm).unwrap();
+            assert_eq!(
+                hm["exp"],
+                Value::from(
+                    Utc::now()
+                        .add(Duration::minutes(15))
+                        .with_second(0)
+                        .unwrap()
+                        .timestamp()
+                )
+            );
+        }
+
+        #[test]
         fn test_string_parsing() {
             let mut hm = ClaimsMap::default();
             hm.insert("exp".to_string(), "1h".into());
