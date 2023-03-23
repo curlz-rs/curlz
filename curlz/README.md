@@ -25,7 +25,7 @@
 - ️evaluate placeholders at the beginning of an url like:
 `curlz r --define 'host=https://httpbin.org' '{{host}}/get'`
 - ️special placeholder for developers, like for Json Web Tokens (JWT)
-`{{ jwt(claims, signing_key) }}`, where `claims` and `signing_key` are looked up at the environment file or can be directly provided map and string
+`{{ jwt(claims, jwt_signing_key) }}`, where `claims` and `jwt_signing_key` are looked up at the environment file or can be directly provided map and string
 `curlz r -H 'Authorization: Bearer {{ jwt({"uid": "1234"}, "000") }}' https://httpbin.org/bearer -- -vvv`
 - send a http body via `-d | --data` 
 `curlz r -d 'Hello World' -X POST https://httpbin.org/anything`
@@ -53,10 +53,10 @@ In this example we're going to download a pre-configured `.gitignore` for a give
 
 ## Template function documentation
 
-### Json Web Token - `jwt(claims: map, [signing_key: string])`
+### Json Web Token - `jwt(claims: map, [jwt_signing_key: string])`
 - arguments:
   - `claims`: to be a map of key value pairs like `{"uid": "1234"}` that are the payload of the JWT
-  - `signing_key`: to be a string, this is optional and can be provided at the environment file with a variable named `jwt_signing_key`
+  - `jwt_signing_key`: to be a string, this is optional and can be provided at the environment file with a variable named `jwt_signing_key`
 - output: string is a Json Web Token (JWT)
 - notes: 
   - the hash algorithm is `HS256` and the JWT header is `{"alg": "HS256", "typ": "JWT"}`
