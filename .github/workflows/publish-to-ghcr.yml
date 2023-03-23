@@ -1,0 +1,50 @@
+# see
+# https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions
+name: publish docker image to ghcr.io
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      releaseVersion:
+        description: version without 'v' to be released
+        required: true
+        type: string
+    secrets:
+      - GH_PAT:
+        required: true
+  release:
+    types:
+      - published
+
+env:
+  #  LATEST_RELEASE_VERSION: ${{ github.event.release.tag_name || inputs.releaseVersion }}
+  LATEST_RELEASE_VERSION: ${{ inputs.releaseVersion }}
+  LATEST_RELEASE_TAG: v${{ env.LATEST_RELEASE_VERSION }}
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Log in to the Container registry
+        shell: bash
+        working-directory: docker
+        run: make login
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      - name: Build & Push Images
+        shell: bash
+        working-directory: docker
+        run: |
+          make build
+          make test
+          make multibuild
+          make publish
