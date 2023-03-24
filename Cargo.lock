@@ -293,7 +293,7 @@ dependencies = [
 
 [[package]]
 name = "curlz"
-version = "0.1.0-alpha.11"
+version = "0.1.0-alpha.12"
 dependencies = [
  "anyhow",
  "assert_cmd",
