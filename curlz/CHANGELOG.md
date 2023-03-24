@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.12](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.11...v0.1.0-alpha.12) - 2023-03-24
+
+### Added
+- robuster jwt token generation (#87)
+- *(cli)* implement `-u | --user` request cli argument (#7) (#46)
+- *(template)* implement the basic auth template function (#7) (#33)
+- *(template)* support environment variables from process / shell (#30) (#31)
+
+### Fixed
+- *(http-lang)* make grammar bit more robust (#82)
+- *(deps)* update rust crate jsonwebtoken to 8.3 (#73)
+- *(deps)* update rust crate jsonwebtoken to 8.2 (#66)
+- *(deps)* update rust crate pest_derive to 2.5 (#68)
+- *(http-lang)* make grammar bit more robust for trailing whitespaces (#63)
+
+### Other
+- *(deps)* update rust crate rstest to 0.17 (#84)
+- release v0.1.0-alpha.11 (#71)
+- *(deps)* update rust crate predicates to v3 (#72)
+- *(deps)* update rust crate tempfile to 3.4 (#65)
+- release v0.1.0-alpha.10 (#53)
+- migrate to clap v4 (#54)
+- *(deps)* bump pest from 2.5.5 to 2.5.6 (#51)
+- release 0.1.0-alpha.9 (#45)
+- release (#43)
+- release (#39)
+- release 0.1.0-alpha.6 (#34)
+- release `0.1.0-alpha.5` (#29)
+
 ## [0.1.0-alpha.11](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.10...v0.1.0-alpha.11) - 2023-03-15
 
 ### Fixed
