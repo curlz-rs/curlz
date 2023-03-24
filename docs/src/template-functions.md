@@ -102,3 +102,23 @@ curlz r -H 'Authorization: Basic {{ basic("joe", "secret") }}' https://httpbin.o
   }
 }
 ```
+
+## Unix Timestamp - `timestamp()`
+
+Returns the number of non-leap seconds since January 1, 1970 0:00:00 UTC (aka “UNIX timestamp”)
+
+### Example of Timestamp
+
+```shell
+curlz r -H 'Now: {{ timestamp() }}' https://httpbin.org/headers
+
+{
+  "headers": {
+    "Accept": "*/*",
+    "Host": "httpbin.org",
+    "Now": "1679678951",
+    "User-Agent": "curl/7.86.0",
+    "X-Amzn-Trace-Id": "Root=1-641ddde8-6f9dfa095fa782a323fc6300"
+  }
+}
+```
