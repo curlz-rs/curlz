@@ -1,11 +1,7 @@
 mod functions;
 pub mod variables;
 
-use functions::process_env::process_env;
-
 use crate::domain::environment::Environment;
-use crate::template::functions::process_env::ProcessEnv;
-use crate::template::functions::{auth, prompt};
 
 use minijinja::value::Value;
 use minijinja::Environment as MEnvironment;
@@ -25,14 +21,8 @@ impl<'source> Renderer<'source> {
     pub fn new(env: &Environment) -> Self {
         let ctx: Value = env.into();
         let mut env = MEnvironment::new();
-        env.add_function("processEnv", process_env);
-        env.add_function("process_env", process_env);
 
-        prompt::register_functions(&mut env);
-        auth::register_functions(&mut env);
-
-        // this provides lazy env var lookup
-        env.add_global("env", Value::from_struct_object(ProcessEnv));
+        functions::register_functions(&mut env);
 
         Self { env, ctx }
     }
