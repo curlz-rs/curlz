@@ -1,5 +1,6 @@
 FROM curlimages/curl:8.00.1 as builder
 
+LABEL org.opencontainers.image.source https://github.com/curlz-rs/curlz
 ARG CURLZ_RELEASE_TAG=v0.1.0-alpha.11
 ARG CURLZ_GIT_REPO=https://github.com/curlz-rs/curlz
 ARG LABEL_VERSION=1.0.0
