@@ -18,7 +18,6 @@ build:
 
 multibuild:
 	docker buildx build ${DOCKER_BUILD_OPTS} ${DOCKER_BUILD_ARGS} -t "ghcr.io/curlz-rs/curlz:${LATEST_RELEASE_VERSION}" --platform=${DOCKER_MULTI_ARCH} -f Dockerfile . --push
-	docker buildx imagetools create "ghcr.io/curlz-rs/curlz:${LATEST_RELEASE_VERSION}" --tag curlz-rs/curlz:latest
 
 publish:
 	docker push ghcr.io/curlz-rs/curlz:${LATEST_RELEASE_VERSION}
