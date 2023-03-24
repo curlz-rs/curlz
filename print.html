@@ -149,40 +149,36 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<h2 id="store-favorite-requests-and-use-advance-variables--template-functions"><a class="header" href="#store-favorite-requests-and-use-advance-variables--template-functions">store favorite requests and use advance variables / template functions</a></h2>
-<p>TBD</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<h3 id="placeholders-everywhere"><a class="header" href="#placeholders-everywhere">Placeholders everywhere</a></h3>
+<p>️placeholders at the beginning of an url e.g.</p>
+<pre><code class="language-sh">curlz r --define 'host=https://httpbin.org' '{{host}}/get'
+</code></pre>
+<p>placeholders in HTTP Headers, e.g.</p>
+<pre><code class="language-sh">curlz r -H 'Username: {{ env.USER }}' https://httpbin.org/headers
+</code></pre>
+<h3 id="json-payload----json"><a class="header" href="#json-payload----json">JSON Payload | <code>--json</code></a></h3>
+<p>This is a shortcut for setting 2 HTTP Headers and sending data as with <code>-d | --data</code></p>
+<h4 id="example"><a class="header" href="#example">Example</a></h4>
+<pre><code class="language-sh">curlz r --json '{ &quot;foo&quot;: &quot;bar&quot; }' -X POST 'https://httpbin.org/anything'
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="template-function-documentation"><a class="header" href="#template-function-documentation">Template function documentation</a></h1>
 <h2 id="prompt-user-input---prompt_forname-string"><a class="header" href="#prompt-user-input---prompt_forname-string">Prompt User Input - <code>prompt_for(name: string)</code></a></h2>
 <ul>
-<li>arguments:
+<li>
+<p>arguments:</p>
 <ul>
 <li><code>name</code>: a name that is printed before the user would input data</li>
 </ul>
 </li>
-<li>output: string</li>
-<li>notes:
+<li>
+<p>output: string</p>
+</li>
+<li>
+<p>notes:</p>
 <ul>
 <li>don't use this for passwords, consider <code>prompt_password()</code> for this</li>
 </ul>
-</li>
-<li>examples:
-<ul>
-<li>
-<p>let the user enter an arbitrary username</p>
-<pre><code class="language-shell">curlz r https://api.github.com/user -- \
-  -u '{{ prompt_for(&quot;GitHub Username&quot;) }}:{{ prompt_password() }}'
-</code></pre>
-</li>
-</ul>
-</li>
-</ul>
-<h2 id="prompt-user-for-password---prompt_password"><a class="header" href="#prompt-user-for-password---prompt_password">Prompt User for Password - <code>prompt_password()</code></a></h2>
-<ul>
-<li>
-<p>arguments: None</p>
-</li>
-<li>
-<p>output: string</p>
 </li>
 <li>
 <p>examples:</p>
@@ -194,49 +190,88 @@
 </code></pre>
 </li>
 </ul>
-<h2 id="json-web-token---jwtclaims-map-signing_key-string"><a class="header" href="#json-web-token---jwtclaims-map-signing_key-string">Json Web Token - <code>jwt(claims: map, [signing_key: string])</code></a></h2>
+<h2 id="prompt-user-for-password---prompt_password"><a class="header" href="#prompt-user-for-password---prompt_password">Prompt User for Password - <code>prompt_password()</code></a></h2>
+<ul>
+<li>arguments: None</li>
+<li>output: string</li>
+</ul>
+<h3 id="example-username"><a class="header" href="#example-username">Example: Username</a></h3>
+<p>let the user enter an arbitrary username:</p>
+<pre><code class="language-sh">curlz r -u '{{ prompt_for(&quot;GitHub Username&quot;) }}:{{ prompt_password() }}' https://api.github.com/user
+</code></pre>
+<h2 id="json-web-token---jwtclaims-map-jwt_signing_key-string"><a class="header" href="#json-web-token---jwtclaims-map-jwt_signing_key-string">Json Web Token - <code>jwt(claims: map, [jwt_signing_key: string])</code></a></h2>
 <ul>
 <li>arguments:
 <ul>
 <li><code>claims</code>: to be a map of key value pairs like <code>{&quot;uid&quot;: &quot;1234&quot;}</code> that
 are the payload of the JWT</li>
-<li><code>signing_key</code>: to be a string, this is optional and can be provided
-at the environment file with a variable named <code>jwt_signing_key</code></li>
+<li><code>jwt_signing_key</code>: to be a string,
+this is optional and when omitted a variable
+named <code>jwt_signing_key</code> will be taken from the <code>.env</code> file,
+if that variable is missing an error is raised</li>
+<li>Note: also key value arguments are possible: <code>jwt(uid=&quot;1234&quot;, jwt_signing_key=&quot;999&quot;)</code></li>
 </ul>
 </li>
 <li>output: string is a Json Web Token (JWT)</li>
 <li>notes:
 <ul>
-<li>the hash algorithm is <code>HS256</code> and the JWT header is <code>{&quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot;}</code>
+<li>the hash algorithm is <code>HS256</code> and the JWT header is <code>{&quot;alg&quot;: &quot;HS256&quot;, &quot;typ&quot;: &quot;JWT&quot;}</code></li>
+<li>the claim <code>exp</code> expiry timestamp (UNIX-Timestamp) is set to expire in 15min by default
 <ul>
-<li>the claim <code>exp</code> expiry time is set to in 15min by default, but can be overwritten</li>
-<li>the claim <code>iat</code> issued at timestamp is set automatically and can't be overwritten</li>
+<li>can be overwritten by a UNIX-Timestamp or a duration string like &quot;15min&quot; or &quot;1h&quot;</li>
+</ul>
+</li>
+<li>the claim <code>iat</code> issued at timestamp is set automatically, can't be overwritten</li>
+<li>you can find a full <a href="https://www.iana.org/assignments/jwt/jwt.xhtml">list of commonly used claims at iana.org</a></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
+<h3 id="example-simple-claims"><a class="header" href="#example-simple-claims">Example: Simple Claims</a></h3>
+<p>This example illustrates how a JWT Signing Key will be used from a <code>.env</code> file implicitly.
+Given an <code>.env</code> file like this:</p>
+<pre><code class="language-plain"># .env
+jwt_signing_key=123Secret123
+</code></pre>
+<p>The usage of <code>jwt</code> would look like this:</p>
+<pre><code class="language-sh">curlz r -H 'Authorization: Bearer {{ jwt({&quot;email&quot;: &quot;john@dow.com&quot;, &quot;sub&quot;: &quot;some subject&quot;}) }}' https://httpbin.org/headers
+</code></pre>
+<p>Alternatively, you can provide the claims as named arguments like:</p>
+<pre><code class="language-sh">curlz r -H 'Authorization: Bearer {{ jwt(email=&quot;john@dow.com&quot;, sub=&quot;some subject&quot;) }}' https://httpbin.org/headers
+
+{
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;,
+    &quot;Authorization&quot;: &quot;Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Nzk1MjQ2ODAsInN1YiI6InNvbWUgc3ViamVjdCIsImVtYWlsIjoiam9obkBkb3cuY29tIiwiaWF0IjoxNjc5NTIzNzgwfQ.bt6taB1YGyMc_43mZeq77dgS_teyglUWtr1dsObyXTg&quot;,
+    &quot;Host&quot;: &quot;httpbin.org&quot;,
+    &quot;User-Agent&quot;: &quot;curl/7.86.0&quot;,
+    &quot;X-Amzn-Trace-Id&quot;: &quot;Root=1-641b7fd7-65e24681239a404d6a143187&quot;
+  }
+}
+</code></pre>
 <h2 id="basic-auth-token---basicusername-string-password-string"><a class="header" href="#basic-auth-token---basicusername-string-password-string">Basic Auth Token - <code>basic(username: string, password: string)</code></a></h2>
 <ul>
-<li>
-<p>arguments:</p>
+<li>arguments:
 <ul>
 <li><code>username</code>: the username as string</li>
 <li><code>password</code>: the password as string</li>
 </ul>
 </li>
-<li>
-<p>output: string is a base64 encoded credential <code>username:password</code></p>
-</li>
-<li>
-<p>examples:</p>
-<ul>
-<li>send a basic auth header</li>
+<li>output: string is a base64 encoded credential <code>username:password</code></li>
 </ul>
-<pre><code class="language-sh">curlz r -H 'Authorization: Basic {{ basic(&quot;joe&quot;, &quot;secret&quot;) }}' https://httpbin.org/headers 
+<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
+<p>send a basic auth header with <code>username</code> <code>joe</code> and <code>password</code> <code>secret</code>:</p>
+<pre><code class="language-sh">curlz r -H 'Authorization: Basic {{ basic(&quot;joe&quot;, &quot;secret&quot;) }}' https://httpbin.org/headers
+
+{
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;,
+    &quot;Authorization&quot;: &quot;Basic am9lOnNlY3JldA==&quot;,
+    &quot;Host&quot;: &quot;httpbin.org&quot;,
+    &quot;User-Agent&quot;: &quot;curl/7.86.0&quot;,
+    &quot;X-Amzn-Trace-Id&quot;: &quot;Root=1-641b7fc0-1228f6242d06665a515e5cf9&quot;
+  }
+}
 </code></pre>
-</li>
-</ul>
 
                     </main>
 

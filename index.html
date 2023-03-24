@@ -151,8 +151,19 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<h2 id="store-favorite-requests-and-use-advance-variables--template-functions"><a class="header" href="#store-favorite-requests-and-use-advance-variables--template-functions">store favorite requests and use advance variables / template functions</a></h2>
-<p>TBD</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<h3 id="placeholders-everywhere"><a class="header" href="#placeholders-everywhere">Placeholders everywhere</a></h3>
+<p>️placeholders at the beginning of an url e.g.</p>
+<pre><code class="language-sh">curlz r --define 'host=https://httpbin.org' '{{host}}/get'
+</code></pre>
+<p>placeholders in HTTP Headers, e.g.</p>
+<pre><code class="language-sh">curlz r -H 'Username: {{ env.USER }}' https://httpbin.org/headers
+</code></pre>
+<h3 id="json-payload----json"><a class="header" href="#json-payload----json">JSON Payload | <code>--json</code></a></h3>
+<p>This is a shortcut for setting 2 HTTP Headers and sending data as with <code>-d | --data</code></p>
+<h4 id="example"><a class="header" href="#example">Example</a></h4>
+<pre><code class="language-sh">curlz r --json '{ &quot;foo&quot;: &quot;bar&quot; }' -X POST 'https://httpbin.org/anything'
+</code></pre>
 
                     </main>
 
