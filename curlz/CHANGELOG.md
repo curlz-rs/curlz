@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.13](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.12...v0.1.0-alpha.13) - 2023-03-28
+
+### Added
+- *(functions)* implement #98 a build-in function for generating an unix timestamp (#99)
+
+### Fixed
+- *(deps)* update bump minor versions to 0.31 (minor) (#102)
+
+### Other
+- bit more test coverage (#100)
+- release v0.1.0-alpha.12 (#76)
+
 ## [0.1.0-alpha.12](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.11...v0.1.0-alpha.12) - 2023-03-24
 
 ### Added
