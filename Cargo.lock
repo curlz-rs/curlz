@@ -980,18 +980,18 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
 name = "minijinja"
-version = "0.30.7"
+version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2819be6b8bd3236f0fdbf86b1ff2d1f42ef8ef939eed74f6bc3ecf2e6344cd96"
+checksum = "673d1ece89f7e166f43270800d78f9b1a9d21fda92dbcfa3b98b21213cdccbbc"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "minijinja-stack-ref"
-version = "0.30.7"
+version = "0.31.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ab6da6448d26e30a60500cbdb566251d9ce4b50f98ee55bfddb1c6840e336cd"
+checksum = "83672613fd4b90592256553a07e8ae8db7babbbaafe9065437a5797a8f3813b7"
 dependencies = [
  "minijinja",
 ]
@@ -1402,9 +1402,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c533a59c9d8a93a09c6ab31f0fd5e5f4dd1b8fc9434804029839884765d04ea"
+checksum = "d721eca97ac802aa7777b701877c8004d950fc142651367300d21c1cc0194744"
 dependencies = [
  "indexmap",
  "itoa",
