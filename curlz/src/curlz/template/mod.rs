@@ -38,3 +38,19 @@ impl<'source> Renderer<'source> {
         template.render(&self.ctx).map_err(|e| e.into())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_renderer_from_environment() {
+        let mut env = Environment::default();
+        env.insert("foo", "bar");
+        let mut r: Renderer = (&env).into();
+        r.inject_variable("bak", "foo".to_string());
+
+        assert_eq!(r.render("{{ foo }}", "something").unwrap(), "bar");
+        assert_eq!(r.render("{{ bak }}", "something2").unwrap(), "foo");
+    }
+}
