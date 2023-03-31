@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0-alpha.13](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.12...v0.1.0-alpha.13) - 2023-03-31
+
+### Fixed
+- *(deps)* update bump minor versions (minor) (#104)
+
+### Other
+- *(deps)* update rust crate tempfile to 3.5 (#106)
+
 ## [0.1.0-alpha.12](https://github.com/curlz-rs/curlz/compare/v0.1.0-alpha.11...v0.1.0-alpha.12) - 2023-03-24
 
 ### Added
