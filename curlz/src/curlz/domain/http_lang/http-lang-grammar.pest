@@ -1,16 +1,17 @@
-request = { request_line ~ headers? ~ (NEWLINE ~ body)? }
-
-request_line = _{ method ~ SPACE_SEPARATOR ~ uri ~ SPACE_SEPARATOR+ ~ version ~ SPACE_SEPARATOR* ~ NEWLINE }
-uri = { (!SPACE_SEPARATOR ~ ANY)+ }
-method = { "GET" | "POST" | "PUT" | "DELETE" }
-version = { "HTTP/" ~ (ASCII_DIGIT | ".")+ }
-
-headers = { header+ }
-header = { header_name ~ SPACE_SEPARATOR* ~ ":" ~ SPACE_SEPARATOR* ~ header_value ~ SPACE_SEPARATOR* ~ NEWLINE }
-header_name = { (!(":" | NEWLINE) ~ ANY)+ }
-header_value = { (!NEWLINE ~ ANY)+ }
-
-body = { !NEWLINE ~ (!delimiter ~ ANY)* }
-delimiter = { "#"{3} ~ (!NEWLINE ~ ANY)+ ~ SPACE_SEPARATOR* ~ NEWLINE+ }
+WP = _{ SPACE_SEPARATOR | "\t" }
+NL = _{ WP* ~ NEWLINE }
 
 file = { SOI ~ (delimiter? ~ request) ~ (delimiter ~ request)* ~ EOI}
+  delimiter = { "#"{3} ~ (!NEWLINE ~ ANY)+ ~ NL+ }
+  request = { request_line ~ headers? ~ (NL ~ body)? }
+    request_line = _{ method ~ WP+ ~ uri ~ WP+ ~ version ~ NL }
+      method = { "GET" | "POST" | "PUT" | "DELETE" }
+      uri = { (!WP ~ ANY)+ }
+      version = { "HTTP/" ~ ASCII_DIGIT ~ "." ~ ASCII_DIGIT }
+
+      headers = { header+ }
+        header = { header_name ~ WP* ~ ":" ~ WP* ~ header_value ~ NL }
+          header_name = { (!(":" | NEWLINE) ~ ANY)+ }
+          header_value = { (!NEWLINE ~ ANY)+ }
+
+      body = { !NEWLINE ~ (!delimiter ~ ANY)* }
