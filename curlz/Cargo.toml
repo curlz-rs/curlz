@@ -23,16 +23,16 @@ filenamify = "0.1"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
 humantime = "2.1"
 
-minijinja = "0.31"
+minijinja = "0.32"
 
 jsonwebtoken = "8.3"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 base64 = "0.21"
 
 ## experimental
-pest = { version = "2.5", optional = true }
-pest_derive = { version = "2.5", optional = true }
-minijinja-stack-ref = "0.31"
+pest = { version = "2.6", optional = true }
+pest_derive = { version = "2.6", optional = true }
+minijinja-stack-ref = "0.32"
 
 [features]
 "x-http-lang" = ['dep:pest', 'dep:pest_derive']
