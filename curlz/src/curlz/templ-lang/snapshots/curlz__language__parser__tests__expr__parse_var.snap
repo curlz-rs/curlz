@@ -1,0 +1,38 @@
+---
+source: src/curlz/language/parser.rs
+expression: p.parse()
+---
+Ok(
+    Template(
+        Spanned {
+            node: Template {
+                children: [
+                    EmitRaw(
+                        Spanned {
+                            node: EmitRaw {
+                                raw: "hello ",
+                            },
+                            span:  @ 1:0-1:6,
+                        },
+                    ),
+                    EmitExpr(
+                        Spanned {
+                            node: EmitExpr {
+                                expr: Var(
+                                    Spanned {
+                                        node: Var {
+                                            id: "world",
+                                        },
+                                        span:  @ 1:9-1:14,
+                                    },
+                                ),
+                            },
+                            span:  @ 1:6-0:0,
+                        },
+                    ),
+                ],
+            },
+            span:  @ 0:0-0:0,
+        },
+    ),
+)
