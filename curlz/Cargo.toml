@@ -23,7 +23,7 @@ filenamify = "0.1"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
 humantime = "2.1"
 
-minijinja = "0.32"
+minijinja = "1.0"
 
 jsonwebtoken = "8.3"
 serde_json = { version = "1.0", features = ["preserve_order"] }
