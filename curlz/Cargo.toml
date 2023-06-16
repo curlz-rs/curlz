@@ -32,7 +32,7 @@ base64 = "0.21"
 ## experimental
 pest = { version = "2.6", optional = true }
 pest_derive = { version = "2.6", optional = true }
-minijinja-stack-ref = "0.32"
+minijinja-stack-ref = "1.0"
 
 [features]
 "x-http-lang" = ['dep:pest', 'dep:pest_derive']
