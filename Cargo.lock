@@ -1053,18 +1053,18 @@ checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
 
 [[package]]
 name = "minijinja"
-version = "0.31.0"
+version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "673d1ece89f7e166f43270800d78f9b1a9d21fda92dbcfa3b98b21213cdccbbc"
+checksum = "e813a9b613280e7d9e5be27ab556530d7c5562d26e5e6ef586e2c4512d34550d"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "minijinja-stack-ref"
-version = "0.31.0"
+version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "83672613fd4b90592256553a07e8ae8db7babbbaafe9065437a5797a8f3813b7"
+checksum = "31b8b50dd0ce1f0fabd45149e551801bc322fb20b10203294df3ef7e1accef2b"
 dependencies = [
  "minijinja",
 ]
@@ -1165,9 +1165,9 @@ checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "pest"
-version = "2.5.7"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b1403e8401ad5dedea73c626b99758535b342502f8d1e361f4a2dd952749122"
+checksum = "16833386b02953ca926d19f64af613b9bf742c48dcd5e09b32fbfc9740bf84e2"
 dependencies = [
  "thiserror",
  "ucd-trie",
@@ -1175,9 +1175,9 @@ dependencies = [
 
 [[package]]
 name = "pest_derive"
-version = "2.5.7"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be99c4c1d2fc2769b1d00239431d711d08f6efedcecb8b6e30707160aee99c15"
+checksum = "7763190f9406839f99e5197afee8c9e759969f7dbfa40ad3b8dbee8757b745b5"
 dependencies = [
  "pest",
  "pest_generator",
@@ -1185,9 +1185,9 @@ dependencies = [
 
 [[package]]
 name = "pest_generator"
-version = "2.5.7"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e56094789873daa36164de2e822b3888c6ae4b4f9da555a1103587658c805b1e"
+checksum = "249061b22e99973da1f5f5f1410284419e283bb60b79255bf5f42a94b66a2e00"
 dependencies = [
  "pest",
  "pest_meta",
@@ -1198,9 +1198,9 @@ dependencies = [
 
 [[package]]
 name = "pest_meta"
-version = "2.5.7"
+version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6733073c7cff3d8459fda0e42f13a047870242aed8b509fe98000928975f359e"
+checksum = "457c310cfc9cf3f22bc58901cc7f0d3410ac5d6298e432a4f9a6138565cb6df6"
 dependencies = [
  "once_cell",
  "pest",
@@ -1483,9 +1483,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.95"
+version = "1.0.97"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d721eca97ac802aa7777b701877c8004d950fc142651367300d21c1cc0194744"
+checksum = "bdf3bf93142acad5821c99197022e170842cdbc1c30482b98750c688c640842a"
 dependencies = [
  "indexmap",
  "itoa",
