@@ -1,4 +1,4 @@
-FROM curlimages/curl:8.00.1 as builder
+FROM curlimages/curl:8.7.1 as builder
 
 LABEL org.opencontainers.image.source https://github.com/curlz-rs/curlz
 ARG CURLZ_RELEASE_TAG=v0.1.0-alpha.11
@@ -13,7 +13,7 @@ RUN curl ${CURLZ_GIT_REPO}/releases/download/${CURLZ_RELEASE_TAG}/curlz-${CURLZ_
     tar xzfv /tmp/curlz.tar.gz curlz && \
     chmod a+x /tmp/curlz
 
-FROM curlimages/curl:8.00.1
+FROM curlimages/curl:8.7.1
 
 COPY --from=builder "/tmp/curlz" "/usr/bin/curlz"
 USER curl_user
