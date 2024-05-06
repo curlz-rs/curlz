@@ -25,7 +25,7 @@ humantime = "2.1"
 
 minijinja = "0.32"
 
-jsonwebtoken = "8.3"
+jsonwebtoken = "9.0"
 serde_json = { version = "1.0", features = ["preserve_order"] }
 base64 = "0.21"
 
