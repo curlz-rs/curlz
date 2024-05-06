@@ -8,31 +8,31 @@ license = "GPL-3.0-only"
 include = ["src/**/*", "LICENSE", "*.md"]
 
 [dependencies]
-env_logger = "0.10"
-log = "0.4"
-clap = { version = "4.2", features = ["derive", "std", "cargo", "usage", "help"] }
+env_logger = "0.10.2"
+log = "0.4.21"
+clap = { version = "4.2.7", features = ["derive", "std", "cargo", "usage", "help"] }
 #clap_complete = "4.1"
-clap-verbosity-flag = "2.0"
+clap-verbosity-flag = "2.0.1"
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.9"
-dotenvy = { version = "0.15" }
-anyhow = "1.0"
+serde_yaml = "0.9.34"
+dotenvy = { version = "0.15.7" }
+anyhow = "1.0.82"
 convert_case = "0.6"
-dialoguer = "0.10"
+dialoguer = "0.10.4"
 filenamify = "0.1"
-chrono = { version = "0.4", default-features = false, features = ["clock"] }
+chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
 humantime = "2.1"
 
-minijinja = "0.32"
+minijinja = "0.32.1"
 
 jsonwebtoken = "8.3"
-serde_json = { version = "1.0", features = ["preserve_order"] }
-base64 = "0.21"
+serde_json = { version = "1.0.116", features = ["preserve_order"] }
+base64 = "0.21.7"
 
 ## experimental
-pest = { version = "2.6", optional = true }
-pest_derive = { version = "2.6", optional = true }
-minijinja-stack-ref = "0.32"
+pest = { version = "2.7.10", optional = true }
+pest_derive = { version = "2.7.10", optional = true }
+minijinja-stack-ref = "0.32.1"
 
 [features]
 "x-http-lang" = ['dep:pest', 'dep:pest_derive']
@@ -40,12 +40,12 @@ minijinja-stack-ref = "0.32"
 [dev-dependencies]
 insta = "1"
 tempfile = "3.5"
-assert_cmd = "2.0"
-predicates = "3.0"
+assert_cmd = "2.0.14"
+predicates = "3.0.4"
 rstest = "0.17"
-wiremock = "0.5"
-tokio = { version = "1", features = ["rt", "macros"], default-features = false }
-indoc = "2"
+wiremock = "0.5.22"
+tokio = { version = "1.0.3", features = ["rt", "macros"], default-features = false }
+indoc = "2.0.5"
 pretty_assertions = "1"
 
 [[bin]]
