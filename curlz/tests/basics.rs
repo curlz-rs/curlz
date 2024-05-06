@@ -8,10 +8,12 @@ mod testlib;
 
 #[test]
 fn should_show_usage_when_no_args_passed() {
-    binary()
-        .assert()
-        .failure()
-        .stderr(predicate::str::contains("USAGE:"));
+    #[cfg(windows)]
+    let pattern = predicate::str::contains("Usage: curlz.exe [OPTIONS] <COMMAND>");
+    #[cfg(not(windows))]
+    let pattern = predicate::str::contains("Usage: curlz [OPTIONS] <COMMAND>");
+
+    binary().assert().failure().stderr(pattern);
 }
 
 #[tokio::test]

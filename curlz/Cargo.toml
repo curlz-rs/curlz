@@ -2,7 +2,7 @@
 name = "curlz"
 authors = ["Sven Kanoldt <sven@d34dl0ck.me>"]
 description = "curl wrapper with placeholder, bookmark and environment powers just like postman"
-version = "0.1.0-alpha.5"
+version = "0.1.0-alpha.12"
 edition = "2021"
 license = "GPL-3.0-only"
 include = ["src/**/*", "LICENSE", "*.md"]
@@ -10,8 +10,9 @@ include = ["src/**/*", "LICENSE", "*.md"]
 [dependencies]
 env_logger = "0.10"
 log = "0.4"
-clap = { version = "3.2", features = ["derive", "std", "cargo"], default-features = false }
-clap-verbosity-flag = "1.0"
+clap = { version = "4.2", features = ["derive", "std", "cargo", "usage", "help"] }
+#clap_complete = "4.1"
+clap-verbosity-flag = "2.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 dotenvy = { version = "0.15" }
@@ -20,26 +21,28 @@ convert_case = "0.6"
 dialoguer = "0.10"
 filenamify = "0.1"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
+humantime = "2.1"
 
-minijinja = "0.30"
+minijinja = "0.32"
 
-jsonwebtoken = "8.1"
+jsonwebtoken = "8.3"
 serde_json = { version = "1.0", features = ["preserve_order"] }
+base64 = "0.21"
 
 ## experimental
-pest = { version = "2.4", optional = true }
-pest_derive = { version = "2.4", optional = true }
-minijinja-stack-ref = "0.30"
+pest = { version = "2.6", optional = true }
+pest_derive = { version = "2.6", optional = true }
+minijinja-stack-ref = "0.32"
 
 [features]
 "x-http-lang" = ['dep:pest', 'dep:pest_derive']
 
 [dev-dependencies]
 insta = "1"
-tempfile = "3.3"
+tempfile = "3.5"
 assert_cmd = "2.0"
-predicates = "2.1"
-rstest = "0.16"
+predicates = "3.0"
+rstest = "0.17"
 wiremock = "0.5"
 tokio = { version = "1", features = ["rt", "macros"], default-features = false }
 indoc = "2"

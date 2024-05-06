@@ -8,7 +8,8 @@ use clap::Parser;
 use std::path::PathBuf;
 
 #[derive(Clone, Debug, Parser)]
-#[clap(author, version, about, long_about = None, arg_required_else_help(true))]
+#[clap(author, version, about, long_about = None)]
+#[command(arg_required_else_help = true)]
 pub struct HttpFileCli {
     /// Provide an `.env` or a yaml containing template variables
     #[clap(long = "env-file", value_parser, default_value = ".env")]

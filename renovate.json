@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "separateMinorPatch": true,
+  "minor": {
+    "groupName": "bump minor versions"
+  },
+  "patch": {
+    "groupName": "bump patch versions"
+  }
+}

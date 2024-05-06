@@ -1,4 +1,4 @@
-name: Build
+name: Build Faster
 on:
   push:
     branches: [ '*' ]
@@ -11,72 +11,36 @@ on:
 
 jobs:
   check:
-    name: check
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
-    runs-on: ${{ matrix.version }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: setup | rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          profile: minimal
-          components: clippy, rustfmt
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo check
-
-  lint:
-    name: lint
-    needs: check
-    strategy:
-      fail-fast: false
-      matrix:
-        version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
-        cargo-cmd:
-          - fmt --all -- --check
-          - clippy --all-targets --all-features -- -D warnings
-    runs-on: ${{ matrix.version }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: setup | rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          default: true
-          profile: minimal
-          components: clippy, rustfmt
-      - uses: Swatinem/rust-cache@v1
-      - run: cargo ${{ matrix['cargo-cmd'] }}
-
-  tests:
-    name: test
-    needs: check
+    name: build crate
     strategy:
       fail-fast: false
       matrix:
         version: [ 'macos-latest', 'ubuntu-latest', 'windows-latest']
         rust: [ nightly, stable ]
-        cargo-cmd:
-          - test --all --locked -- -Z unstable-options
-          - insta test
     runs-on: ${{ matrix.version }}
-    continue-on-error: ${{ matrix.rust == 'nightly' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: setup | rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: stable
           default: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
       - run: cargo install cargo-insta
-      - name: test
-        run: cargo ${{ matrix['cargo-cmd'] }}
+      - run: cargo check
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo fmt --all -- --check
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+      - run: cargo test --all-features --all --locked -- -Z unstable-options
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: cargo insta test
+        continue-on-error: ${{ matrix.rust == 'nightly' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: smoke tests
@@ -84,19 +48,44 @@ jobs:
           cargo run -- --version
           cargo run -- --help
 
-  audit:
-    name: security audit
-    needs: check
+  coverage:
+    name: coverage report
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: setup | rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
+      - name: cargo tarpaulin
+        uses: actions-rs/tarpaulin@v0.1
+        with:
+          version: '0.15.0'
+          args: '--all-features -- --test-threads 1'
+      - name: Upload to codecov.io
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: cobertura.xml
+          name: code-coverage-report
+          verbose: true
+
+  audit:
+    name: security audit
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup | rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+          profile: minimal
+      - uses: Swatinem/rust-cache@v2
       - name: audit
         uses: actions-rs/audit-check@v1
         continue-on-error: true
@@ -107,28 +96,28 @@ jobs:
     name: publish dry run
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: setup | rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - run: cargo publish --dry-run -p curlz
 
   docs:
     name: docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: setup | rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           default: true
           profile: minimal
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
       - name: check documentation
         env:
           RUSTDOCFLAGS: -D warnings

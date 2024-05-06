@@ -1,9 +1,14 @@
 use dialoguer::{Input, Password};
 use minijinja::value::Value;
-use minijinja::{Error, ErrorKind};
+use minijinja::{Environment, Error, ErrorKind};
+
+pub fn register_functions(env: &mut Environment) {
+    env.add_function("prompt_password", prompt_password);
+    env.add_function("prompt_for", prompt_for);
+}
 
 /// prompt for a password, to be used in a minijinja template
-pub fn prompt_password(_state: &minijinja::State, _args: Vec<Value>) -> Result<String, Error> {
+fn prompt_password(_state: &minijinja::State) -> Result<String, Error> {
     Password::new()
         .with_prompt("Password")
         .allow_empty_password(true)
@@ -14,7 +19,7 @@ pub fn prompt_password(_state: &minijinja::State, _args: Vec<Value>) -> Result<S
 }
 
 /// prompt for something that has a name, to be used in a minijinja template
-pub fn prompt_for(_state: &minijinja::State, prompt: Value) -> Result<String, Error> {
+fn prompt_for(_state: &minijinja::State, prompt: Value) -> Result<String, Error> {
     let prompt = prompt.to_string();
     Input::new()
         .with_prompt(prompt)

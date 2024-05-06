@@ -1,0 +1,27 @@
+name: Book CD
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:  # Allow manual triggers
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]-alpha.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]-beta.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]-rc.[0-9]+'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup mdbook
+        uses: peaceiris/actions-mdbook@v1
+      - run: mdbook build docs
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAT }}
+          publish_dir: ./docs/book

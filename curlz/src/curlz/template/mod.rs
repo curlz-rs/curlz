@@ -1,12 +1,7 @@
 mod functions;
 pub mod variables;
 
-use functions::jwt::jwt;
-use functions::process_env::process_env;
-use functions::prompt::{prompt_for, prompt_password};
-
 use crate::domain::environment::Environment;
-use crate::template::functions::process_env::ProcessEnv;
 
 use minijinja::value::Value;
 use minijinja::Environment as MEnvironment;
@@ -26,15 +21,8 @@ impl<'source> Renderer<'source> {
     pub fn new(env: &Environment) -> Self {
         let ctx: Value = env.into();
         let mut env = MEnvironment::new();
-        env.add_function("processEnv", process_env);
-        env.add_function("process_env", process_env);
 
-        env.add_function("prompt_password", prompt_password);
-        env.add_function("prompt_for", prompt_for);
-        env.add_function("jwt", jwt);
-
-        // this provides lazy env var lookup
-        env.add_global("env", Value::from_struct_object(ProcessEnv));
+        functions::register_functions(&mut env);
 
         Self { env, ctx }
     }
@@ -48,5 +36,21 @@ impl<'source> Renderer<'source> {
         let template = self.env.get_template(name)?;
 
         template.render(&self.ctx).map_err(|e| e.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_renderer_from_environment() {
+        let mut env = Environment::default();
+        env.insert("foo", "bar");
+        let mut r: Renderer = (&env).into();
+        r.inject_variable("bak", "foo".to_string());
+
+        assert_eq!(r.render("{{ foo }}", "something").unwrap(), "bar");
+        assert_eq!(r.render("{{ bak }}", "something2").unwrap(), "foo");
     }
 }

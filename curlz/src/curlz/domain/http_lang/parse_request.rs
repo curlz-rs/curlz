@@ -10,25 +10,31 @@ use pest::Parser;
 #[grammar = "curlz/domain/http_lang/http-lang-grammar.pest"] // relative to project `src`
 struct HttpParser;
 
+#[inline]
+fn trimmed_string<T: pest::RuleType>(rule: Pair<'_, T>) -> String {
+    rule.as_str()
+        .trim()
+        .chars()
+        .filter(|x| !['\n', '\r'].contains(x))
+        .collect()
+}
+
 pub fn parse_request_file(req_file: impl AsRef<str>) -> Result<Vec<Bookmark>, anyhow::Error> {
     let mut requests = vec![];
 
     let req_file = req_file.as_ref();
     let file = HttpParser::parse(Rule::file, req_file)?.next().unwrap();
 
-    let mut slug: String = "".to_owned();
+    let mut delimiter: String = "".to_owned();
     for line in file.into_inner() {
         match line.as_rule() {
             Rule::request => {
                 requests.push(Bookmark {
-                    slug: slug.to_owned(),
+                    slug: delimiter.to_owned(),
                     request: HttpRequest::try_from(line)?,
                 });
             }
-            Rule::delimiter => {
-                slug = line.as_str().trim().to_owned();
-                println!("delimiter = {:?}", line.as_str());
-            }
+            Rule::delimiter => delimiter = trimmed_string(line),
             Rule::EOI => {}
             x => {
                 todo!("x = {:?}\n", x);
@@ -50,8 +56,8 @@ impl TryFrom<Pair<'_, Rule>> for HttpHeaders {
                 for header in headers.into_inner() {
                     let mut inner_rules = header.into_inner();
 
-                    let name: &str = inner_rules.next().unwrap().as_str();
-                    let value: &str = inner_rules.next().unwrap().as_str();
+                    let name = trimmed_string(inner_rules.next().unwrap());
+                    let value = trimmed_string(inner_rules.next().unwrap());
 
                     h.push(name, value);
                 }
@@ -82,12 +88,6 @@ impl TryFrom<Pair<'_, Rule>> for HttpRequest {
                     // todo: maybe an error on parsing remains an error
                     .map(|b| b.unwrap_or_default())
                     .unwrap_or_default();
-
-                dbg!(&method);
-                dbg!(&url);
-                dbg!(&version);
-                dbg!(&headers);
-                dbg!(&body);
 
                 Ok(Self {
                     url,
@@ -161,10 +161,10 @@ mod tests {
     #[rstest]
     #[case(
         indoc! {r#"
-            ### GET gitignore template for rustlang 
+            ### GET gitignore template for rustlang
             GET https://api.github.com/gitignore/templates/Rust HTTP/1.1
             Accept: application/json
-        "#}, 
+        "#},
         Bookmark {
             slug: "### GET gitignore template for rustlang".into(),
             request: HttpRequest {
@@ -202,6 +202,39 @@ mod tests {
             POST https://httpbin.org/anything HTTP/1.1
             Accept: application/json
             Content-Type: application/json
+
+            {
+                "foo": "Bar",
+                "bool": true
+            }
+        "#},
+        Bookmark {
+            slug: "### this is a POST request with a body".into(),
+            request: HttpRequest {
+                url: "https://httpbin.org/anything".into(),
+                method: HttpMethod::Post,
+                version: HttpVersion::Http11,
+                headers: HttpHeaders::from([
+                    "Accept: application/json".to_owned(),
+                    "Content-Type: application/json".to_owned(),
+                ].as_slice()),
+                body: HttpBody::InlineText(indoc! {r#"
+                {
+                    "foo": "Bar",
+                    "bool": true
+                }
+                "#}.to_owned()),
+                curl_params: Default::default(),
+                placeholders: Default::default(),
+            }
+        }
+    )]
+    #[case(
+        indoc! {r#"
+            ### this is a POST request with a body
+            POST https://httpbin.org/anything HTTP/1.1
+            Accept : application/json
+            Content-Type :application/json
 
             {
                 "foo": "Bar",

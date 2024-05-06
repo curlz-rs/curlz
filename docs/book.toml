@@ -1,0 +1,11 @@
+[book]
+authors = ["Sven Kanoldt"]
+language = "en"
+multilingual = false
+title = "The curlz cookbook"
+description = "curl wrapper with placeholder, bookmark and environment powers just like postman"
+
+[output.html]
+git-repository-url = "https://github.com/curlz-rs/curlz"
+edit-url-template = "https://github.com/curlz-rs/curlz/edit/main/docs/{path}"
+site-url = "/curlz/"

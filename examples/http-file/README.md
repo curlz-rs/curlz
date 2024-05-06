@@ -8,3 +8,7 @@ In this folder you find examples that can be used for the curlz feature `x-http-
 ```sh
 cargo run --features x-http-lang -- http-file ./post-to-httpbin.http
 ```
+- run `basic-auth-header.http`: 
+```sh
+cargo run --features x-http-lang -- http-file ./basic-auth-header.http
+```
