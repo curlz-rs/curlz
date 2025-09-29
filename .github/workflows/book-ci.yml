@@ -13,7 +13,7 @@ on:
 jobs:
 
   deploy-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
       - name: Setup mdBook
@@ -21,7 +21,7 @@ jobs:
       - run: mdbook build docs
 
   doc-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
       - name: Setup mdBook
@@ -29,7 +29,7 @@ jobs:
       - run: mdbook test docs
 
   markdown-lint:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v3
       - name: Lint all files recursively
